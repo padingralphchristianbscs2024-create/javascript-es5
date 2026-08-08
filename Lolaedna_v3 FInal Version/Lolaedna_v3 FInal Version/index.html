@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lola Edna's Homemade Food</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Lato:wght@300;400;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --cream: #fdf6ec;
+      --warm-white: #fffaf4;
+      --brown-dark: #3b1f0e;
+      --brown-mid: #6b3a1f;
+      --brown-light: #a0522d;
+      --amber: #c8731a;
+      --amber-light: #e8931a;
+      --gold: #d4a017;
+      --tan: #deb887;
+      --tan-light: #f5deb3;
+      --red-label: #8b1a1a;
+      --text-dark: #2c1a0e;
+      --text-mid: #5a3520;
+      --text-light: #8a6040;
+      --shadow: 0 4px 24px rgba(59, 31, 14, 0.12);
+      --shadow-hover: 0 8px 40px rgba(59, 31, 14, 0.22);
+      --gcash-blue: #0074e0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--text-dark); overflow-x: hidden; }
+
+    .inline-icon { width: 1.15em; height: 1.15em; vertical-align: -0.15em; display: inline-block; margin-right: 0.15em; stroke-width: 2.2; }
+    .btn-primary .inline-icon, .btn-outline .inline-icon, .pay-btn .inline-icon, .fulfill-btn .inline-icon { margin-right: 0.3rem; }
+    .ficon { width: 2rem; height: 2rem; font-size: 2rem; margin: 0 auto 0.6rem; stroke: var(--amber); display: block; line-height: 1; text-align: center; }
+    .step-icon { width: 2.2rem; height: 2.2rem; margin: 0 auto 1rem; stroke: var(--amber); display: block; }
+    .success-icon { width: 4rem; height: 4rem; margin: 0 auto 1rem; stroke: var(--amber); display: block; }
+    .cancel-icon { width: 3rem; height: 3rem; margin: 0 auto 0.75rem; stroke: #dc3545; display: block; }
+    .seller-login-icon { width: 3rem; height: 3rem; margin: 0 auto 0.75rem; stroke: var(--amber); display: block; }
+    .empty-icon { width: 3.5rem; height: 3.5rem; margin: 0 auto 1rem; stroke: var(--text-light); display: block; }
+    .nr-icon { width: 3rem; height: 3rem; margin: 0 auto 0.75rem; stroke: var(--text-light); display: block; }
+    .btn-close svg { width: 1.2em; height: 1.2em; }
+
+    /* ── TOAST ── */
+    #toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 9999; background: var(--brown-dark); color: var(--cream); padding: 0.75rem 1.5rem; border-radius: 50px; font-size: 0.9rem; font-weight: 700; letter-spacing: 0.03em; opacity: 0; transform: translateY(20px); transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); pointer-events: none; display: flex; align-items: center; gap: 0.5rem; }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ── NAVBAR ── */
+    nav { position: sticky; top: 0; z-index: 500; background: var(--brown-dark); display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 2rem; box-shadow: 0 2px 16px rgba(0,0,0,0.35); }
+    .nav-logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+    .nav-logo-text { display: flex; flex-direction: column; }
+    .nav-logo-text .brand { font-family: 'Dancing Script', cursive; font-size: 1.3rem; color: var(--cream); line-height: 1; }
+    .nav-logo-text .sub { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tan); }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; list-style: none; }
+    .nav-links a { color: var(--tan-light); text-decoration: none; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--amber-light); }
+    .nav-actions { display: flex; align-items: center; gap: 1rem; }
+    .btn-icon { position: relative; background: none; border: none; cursor: pointer; color: var(--tan-light); padding: 0.4rem; transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
+    .btn-icon svg { width: 1.4rem; height: 1.4rem; }
+    .btn-icon:hover { color: var(--amber-light); }
+    .cart-badge { position: absolute; top: -4px; right: -4px; background: var(--amber); color: #fff; font-size: 0.65rem; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; opacity: 0; transform: scale(0); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .cart-badge.visible { opacity: 1; transform: scale(1); }
+    .btn-nav-login { background: var(--amber); color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 30px; cursor: pointer; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; transition: background 0.2s, transform 0.15s; }
+    .btn-nav-login:hover { background: var(--amber-light); transform: translateY(-1px); }
+
+    /* ── ORDER TYPE BAR ── */
+    .order-type-bar { background: linear-gradient(135deg, var(--brown-dark), var(--brown-mid)); padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; border-bottom: 2px solid var(--amber); }
+    .order-type-label { color: var(--tan-light); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .toggle-group { display: flex; gap: 0; border-radius: 30px; overflow: hidden; border: 2px solid var(--amber); }
+    .toggle-btn { background: none; border: none; padding: 0.45rem 1.4rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; color: var(--amber); letter-spacing: 0.07em; text-transform: uppercase; transition: background 0.2s, color 0.2s; }
+    .toggle-btn.active { background: var(--amber); color: #fff; }
+    .promo-banner { background: linear-gradient(90deg, var(--gold) 0%, var(--amber-light) 100%); color: var(--brown-dark); padding: 0.5rem 2rem; text-align: center; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em; display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+    .promo-banner.hidden { display: none; }
+    .wholesale-badge { display: inline-block; background: var(--gold); color: var(--brown-dark); font-size: 0.62rem; font-weight: 900; padding: 0.2rem 0.5rem; border-radius: 10px; margin-left: 0.4rem; vertical-align: middle; letter-spacing: 0.08em; }
+    .wholesale-note { background: rgba(212,160,23,0.1); border: 1.5px dashed var(--gold); border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--brown-mid); margin-bottom: 1rem; text-align: center; display: none; }
+    .wholesale-note.show { display: block; }
+
+    /* ── HERO ── */
+    .hero { min-height: 88vh; background: linear-gradient(135deg, var(--brown-dark) 0%, var(--brown-mid) 55%, var(--brown-light) 100%); display: flex; align-items: center; position: relative; overflow: hidden; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"); pointer-events: none; }
+    .hero-content { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; width: 100%; }
+    .hero-text { animation: fadeInLeft 0.9s ease both; }
+    .hero-badge { display: inline-block; background: rgba(200,115,26,0.2); border: 1px solid var(--amber); color: var(--amber-light); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 30px; margin-bottom: 1.5rem; }
+    .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; line-height: 1.1; color: var(--cream); margin-bottom: 0.5rem; }
+    .hero-title .script { font-family: 'Dancing Script', cursive; font-size: 1.1em; color: var(--amber-light); display: block; }
+    .hero-desc { color: var(--tan-light); font-size: 1.05rem; line-height: 1.7; margin: 1.5rem 0 2.5rem; max-width: 480px; }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-visual { display: flex; flex-direction: column; gap: 1rem; animation: fadeInRight 0.9s 0.2s ease both; }
+    .hero-jars { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .jar-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 1.5rem 1rem; text-align: center; backdrop-filter: blur(10px); transition: transform 0.3s, background 0.3s; }
+    .jar-card:hover { transform: translateY(-6px); background: rgba(255,255,255,0.12); }
+    .jar-img { width: 70px; height: 70px; object-fit: cover; border-radius: 50%; margin: 0 auto 0.6rem; display: block; border: 2px solid var(--amber); background: var(--cream); }
+    .jar-card .jname { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--cream); font-weight: 600; }
+    .jar-card .jprice { color: var(--amber-light); font-size: 0.8rem; font-weight: 700; margin-top: 0.2rem; }
+    .hero-notice { background: rgba(212,160,23,0.15); border: 1px solid rgba(212,160,23,0.35); border-radius: 14px; padding: 0.9rem 1.2rem; color: var(--tan-light); font-size: 0.82rem; line-height: 1.5; display: flex; align-items: center; gap: 0.6rem; }
+
+    /* ── SHARED SECTION ── */
+    section { padding: 5rem 2rem; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.75rem; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 900; color: var(--brown-dark); line-height: 1.2; margin-bottom: 1rem; }
+    .section-title em { font-style: italic; color: var(--amber); }
+    .section-desc { color: var(--text-mid); max-width: 560px; line-height: 1.7; font-size: 1rem; }
+
+    /* ── BUTTONS ── */
+    .btn-primary { background: var(--amber); color: #fff; border: none; padding: 0.9rem 2.2rem; border-radius: 50px; cursor: pointer; font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(200,115,26,0.4); }
+    .btn-primary:hover { background: var(--amber-light); transform: translateY(-2px); box-shadow: 0 6px 28px rgba(200,115,26,0.5); }
+    .btn-outline { background: transparent; color: var(--cream); border: 2px solid rgba(255,255,255,0.35); padding: 0.9rem 2.2rem; border-radius: 50px; cursor: pointer; font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: border-color 0.2s, background 0.2s, transform 0.2s; }
+    .btn-outline:hover { border-color: var(--amber); background: rgba(200,115,26,0.1); transform: translateY(-2px); }
+    .btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-mid); transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
+    .btn-close:hover { color: var(--brown-dark); }
+
+    /* ── FEATURES ── */
+    .features { background: var(--brown-dark); padding: 2.5rem 2rem; }
+    .features-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; }
+    .feature-item { text-align: center; color: var(--tan-light); }
+    .feature-item .ftitle { font-weight: 700; font-size: 0.9rem; letter-spacing: 0.05em; color: var(--cream); }
+    .feature-item .fdesc { font-size: 0.8rem; color: var(--tan); margin-top: 0.2rem; }
+
+    /* ── PRODUCTS ── */
+    #products { background: var(--warm-white); }
+    .products-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
+    .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .filter-tab { background: none; border: 2px solid var(--tan-light); color: var(--text-mid); padding: 0.45rem 1.1rem; border-radius: 30px; cursor: pointer; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; transition: all 0.2s; }
+    .filter-tab.active, .filter-tab:hover { background: var(--brown-dark); border-color: var(--brown-dark); color: var(--cream); }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 2rem; }
+    .product-card { background: #fff; border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; }
+    .product-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); }
+    .product-img { height: 200px; position: relative; overflow: hidden; background: var(--cream); }
+    .product-img::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 60%, rgba(59,31,14,0.08)); pointer-events: none; }
+    .product-photo { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+    .product-card:hover .product-photo { transform: scale(1.05); }
+    .product-badge { position: absolute; top: 12px; left: 12px; background: var(--red-label); color: #fff; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.3rem 0.7rem; border-radius: 20px; z-index: 2; }
+    .stock-badge { position: absolute; top: 12px; right: 12px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3rem 0.6rem; border-radius: 20px; display: flex; align-items: center; gap: 0.3rem; z-index: 2; }
+    .stock-ok  { background: #d1e7dd; color: #0a3622; }
+    .stock-low { background: #fff3cd; color: #856404; }
+    .stock-out { background: #f8d7da; color: #842029; }
+    .product-body { padding: 1.4rem; flex: 1; display: flex; flex-direction: column; }
+    .product-cat { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.4rem; }
+    .product-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--brown-dark); margin-bottom: 0.5rem; line-height: 1.3; }
+    .product-desc { font-size: 0.83rem; color: var(--text-light); line-height: 1.6; flex: 1; }
+    .product-meta { margin-top: 1rem; }
+    .product-weight { font-size: 0.75rem; color: var(--text-light); margin-bottom: 0.4rem; }
+    .product-rating-display { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--text-light); margin-bottom: 0.5rem; }
+    .stars-display { color: var(--gold); font-size: 0.85rem; letter-spacing: 1px; }
+    .rating-count { font-size: 0.72rem; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; }
+    .product-price { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 900; color: var(--brown-dark); }
+    .product-price span { font-size: 0.8rem; font-weight: 400; color: var(--text-light); }
+    .btn-add { background: var(--brown-dark); color: var(--cream); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.3rem; display: grid; place-items: center; transition: background 0.2s, transform 0.2s; }
+    .btn-add:hover { background: var(--amber); transform: scale(1.1); }
+    .btn-add:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+    .btn-rate { background: none; border: 1.5px solid var(--gold); color: var(--gold); padding: 0.3rem 0.7rem; border-radius: 20px; font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: background 0.2s, color 0.2s; margin-left: auto; display: inline-flex; align-items: center; gap: 0.3rem; }
+    .btn-rate:hover { background: var(--gold); color: #fff; }
+
+    /* ── ABOUT ── */
+    #about { background: var(--cream); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .about-visual { position: relative; }
+    .about-big-img { width: 100%; max-width: 340px; aspect-ratio: 1; object-fit: cover; border-radius: 24px; display: block; margin: 0 auto; box-shadow: 0 20px 40px rgba(59,31,14,0.15); border: 8px solid var(--warm-white); animation: float 5s ease-in-out infinite; }
+    .about-badge-float { position: absolute; bottom: 1rem; right: 1rem; background: var(--brown-dark); color: var(--cream); border-radius: 16px; padding: 1rem 1.5rem; text-align: center; box-shadow: var(--shadow); }
+    .about-badge-float .big-num { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 900; color: var(--amber-light); line-height: 1; }
+    .about-badge-float .label { font-size: 0.75rem; color: var(--tan); letter-spacing: 0.08em; }
+    .about-list { list-style: none; margin-top: 2rem; display: flex; flex-direction: column; gap: 0.9rem; }
+    .about-list li { display: flex; gap: 0.8rem; align-items: flex-start; font-size: 0.92rem; color: var(--text-mid); line-height: 1.6; }
+    .about-list li::before { content: '✦'; color: var(--amber); flex-shrink: 0; margin-top: 0.1rem; font-size: 0.8rem; }
+
+    /* ── HOW IT WORKS ── */
+    #how { background: var(--brown-dark); }
+    #how .section-title { color: var(--cream); }
+    #how .section-label { color: var(--amber-light); }
+    #how .section-desc  { color: var(--tan); }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 3rem; }
+    .step { text-align: center; padding: 2rem 1.5rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; position: relative; }
+    .step-num { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 900; color: var(--amber); opacity: 0.25; line-height: 1; margin-bottom: 0.5rem; }
+    .step-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--cream); font-weight: 700; margin-bottom: 0.5rem; }
+    .step-desc { font-size: 0.83rem; color: var(--tan); line-height: 1.6; }
+
+    /* ── ALL REVIEWS PAGE SECTION ── */
+    #all-reviews {
+      background: var(--warm-white);
+      padding: 5rem 2rem;
+    }
+
+    .reviews-page-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .reviews-filter-bar {
+      background: #fff;
+      border-radius: 20px;
+      padding: 1.2rem 1.5rem;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+      border: 1.5px solid var(--tan-light);
+    }
+
+    .reviews-filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .reviews-filter-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--amber);
+    }
+
+    .star-filter-chips {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .star-chip {
+      background: none;
+      border: 2px solid var(--tan-light);
+      color: var(--text-mid);
+      padding: 0.35rem 0.85rem;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 700;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      white-space: nowrap;
+    }
+
+    .star-chip.active {
+      background: var(--brown-dark);
+      border-color: var(--brown-dark);
+      color: var(--cream);
+    }
+
+    .star-chip:hover:not(.active) {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .product-filter-select {
+      border: 2px solid var(--tan-light);
+      background: var(--cream);
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--brown-dark);
+      font-family: 'Lato', sans-serif;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      min-width: 200px;
+    }
+
+    .product-filter-select:focus {
+      outline: none;
+      border-color: var(--amber);
+    }
+
+    .reviews-summary-bar {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      background: linear-gradient(135deg, var(--brown-dark), var(--brown-mid));
+      border-radius: 20px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .reviews-overall-score {
+      text-align: center;
+    }
+
+    .reviews-overall-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--amber-light);
+      line-height: 1;
+    }
+
+    .reviews-overall-stars {
+      font-size: 1.3rem;
+      color: var(--gold);
+      margin: 0.3rem 0 0.2rem;
+      letter-spacing: 2px;
+    }
+
+    .reviews-overall-count {
+      font-size: 0.78rem;
+      color: var(--tan);
+    }
+
+    .reviews-score-divider {
+      width: 1px;
+      height: 70px;
+      background: rgba(255,255,255,0.15);
+      flex-shrink: 0;
+    }
+
+    .reviews-bar-breakdown {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .star-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .star-bar-label {
+      font-size: 0.75rem;
+      color: var(--tan);
+      width: 32px;
+      flex-shrink: 0;
+      font-weight: 700;
+    }
+
+    .star-bar-track {
+      flex: 1;
+      height: 7px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .star-bar-fill {
+      height: 100%;
+      background: var(--amber);
+      border-radius: 10px;
+      transition: width 0.6s ease;
+    }
+
+    .star-bar-count {
+      font-size: 0.72rem;
+      color: var(--tan);
+      width: 28px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .reviews-page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .rp-review-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 1.4rem 1.5rem;
+      border: 1.5px solid var(--tan-light);
+      box-shadow: 0 2px 12px rgba(59,31,14,0.07);
+      transition:
+        transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1),
+        box-shadow 0.3s ease,
+        border-color 0.25s ease,
+        background 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    .rp-review-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--amber), var(--gold));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .rp-review-card:hover {
+      transform: translateY(-6px) scale(1.015);
+      box-shadow: 0 16px 40px rgba(59,31,14,0.16);
+      border-color: var(--amber);
+      background: var(--warm-white);
+    }
+
+    .rp-review-card:hover::before {
+      opacity: 1;
+    }
+
+    .rp-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+      gap: 0.5rem;
+    }
+
+    .rp-reviewer-info {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+    }
+
+    .rp-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brown-dark), var(--brown-mid));
+      color: var(--cream);
+      display: grid;
+      place-items: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 2px solid var(--tan-light);
+      transition: border-color 0.25s;
+    }
+
+    .rp-review-card:hover .rp-avatar {
+      border-color: var(--amber);
+    }
+
+    .rp-reviewer-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      color: var(--brown-dark);
+      font-size: 0.95rem;
+      line-height: 1.2;
+    }
+
+    .rp-reviewer-date {
+      font-size: 0.72rem;
+      color: var(--text-light);
+      margin-top: 0.15rem;
+    }
+
+    .rp-stars-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      background: rgba(212,160,23,0.12);
+      border: 1px solid rgba(212,160,23,0.3);
+      border-radius: 20px;
+      padding: 0.25rem 0.6rem;
+      flex-shrink: 0;
+      transition: background 0.25s;
+    }
+
+    .rp-review-card:hover .rp-stars-badge {
+      background: rgba(212,160,23,0.22);
+    }
+
+    .rp-stars-text {
+      color: var(--gold);
+      font-size: 0.82rem;
+      letter-spacing: 1px;
+    }
+
+    .rp-stars-num {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-mid);
+    }
+
+    .rp-product-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      background: var(--cream);
+      border: 1.5px solid var(--tan-light);
+      border-radius: 20px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--brown-mid);
+      margin-bottom: 0.9rem;
+      transition: background 0.25s, border-color 0.25s;
+    }
+
+    .rp-review-card:hover .rp-product-tag {
+      background: rgba(200,115,26,0.08);
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .rp-product-emoji {
+      font-size: 0.95rem;
+    }
+
+    .rp-message {
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      line-height: 1.65;
+      font-style: italic;
+      position: relative;
+      padding-left: 1rem;
+    }
+
+    .rp-message::before {
+      content: '"';
+      position: absolute;
+      left: 0;
+      top: -0.2rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--amber);
+      opacity: 0.4;
+      line-height: 1;
+      transition: opacity 0.25s;
+    }
+
+    .rp-review-card:hover .rp-message::before {
+      opacity: 0.7;
+    }
+
+    .rp-no-reviews {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-light);
+    }
+
+    .rp-no-reviews-icon {
+      width: 4rem;
+      height: 4rem;
+      margin: 0 auto 1rem;
+      stroke: var(--tan);
+      display: block;
+    }
+
+    .rp-no-reviews p {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      color: var(--text-mid);
+      margin-bottom: 0.5rem;
+    }
+
+    .rp-no-reviews span {
+      font-size: 0.85rem;
+    }
+
+    .reviews-count-badge {
+      display: inline-block;
+      background: var(--amber);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 900;
+      padding: 0.25rem 0.7rem;
+      border-radius: 20px;
+      margin-left: 0.6rem;
+      vertical-align: middle;
+      font-family: 'Lato', sans-serif;
+      letter-spacing: 0.04em;
+    }
+
+    .scrollable-grid {
+      max-height: 700px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+      padding-bottom: 1rem;
+    }
+
+    .scrollable-grid::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .scrollable-grid::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.05);
+      border-radius: 10px;
+    }
+    
+    .scrollable-grid::-webkit-scrollbar-thumb {
+      background: var(--tan);
+      border-radius: 10px;
+    }
+
+    /* ── ORDER TRACKER ── */
+    #orders { background: var(--warm-white); }
+    .tracker-card { background: #fff; border-radius: 20px; box-shadow: var(--shadow); padding: 2rem; max-width: 680px; margin: 2rem auto 0; }
+    .tracker-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+    .tracker-id { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--text-mid); }
+    .status-pill { padding: 0.35rem 0.9rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+    .status-approval  { background: #fff0d6; color: #7a4900; }
+    .status-pending   { background: #fff3cd; color: #856404; }
+    .status-preparing { background: #cfe2ff; color: #084298; }
+    .status-delivery  { background: #d1e7dd; color: #0a3622; }
+    .status-delivered { background: #198754; color: #fff; }
+    .status-cancelled { background: #f8d7da; color: #842029; }
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .timeline-step { display: flex; gap: 1rem; align-items: flex-start; padding-bottom: 1.4rem; position: relative; }
+    .timeline-step:not(:last-child)::after { content: ''; position: absolute; left: 16px; top: 32px; bottom: 0; width: 2px; background: var(--tan-light); }
+    .timeline-step.done::after { background: var(--amber); }
+    .t-dot { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; background: var(--tan-light); display: grid; place-items: center; font-size: 0.9rem; border: 2px solid var(--tan-light); z-index: 1; }
+    .t-dot svg { width: 1.2rem; height: 1.2rem; }
+    .timeline-step.done   .t-dot { background: var(--amber); border-color: var(--amber); color: #fff; }
+    .timeline-step.active .t-dot { background: var(--brown-dark); border-color: var(--brown-dark); color: #fff; animation: pulse 1.5s infinite; }
+    .t-info .t-title { font-weight: 700; color: var(--brown-dark); font-size: 0.9rem; }
+    .t-info .t-desc  { font-size: 0.8rem; color: var(--text-light); margin-top: 0.2rem; }
+    .no-orders-msg { text-align: center; padding: 3rem 1rem; color: var(--text-light); font-size: 0.95rem; }
+    .btn-cancel-order { background: none; border: 1.5px solid #dc3545; color: #dc3545; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.78rem; font-weight: 700; cursor: pointer; letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.2s, color 0.2s; display: inline-flex; align-items: center; gap: 0.3rem; }
+    .btn-cancel-order:hover { background: #dc3545; color: #fff; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--brown-dark); color: var(--tan-light); padding: 4rem 2rem 2rem; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+    .footer-brand .fname { font-family: 'Dancing Script', cursive; font-size: 2rem; color: var(--cream); }
+    .footer-brand .fdesc { font-size: 0.85rem; line-height: 1.7; margin-top: 0.75rem; color: var(--tan); max-width: 280px; }
+    .footer-col h4 { font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 1rem; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .footer-col ul li a { color: var(--tan); font-size: 0.85rem; text-decoration: none; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: var(--cream); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-bottom p { font-size: 0.8rem; color: var(--text-light); }
+
+    /* ── FORM FIELDS ── */
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-mid); margin-bottom: 0.5rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; border: 2px solid var(--tan-light); background: #fff; padding: 0.75rem 1rem; border-radius: 12px; font-size: 0.95rem; color: var(--brown-dark); font-family: 'Lato', sans-serif; transition: border-color 0.2s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--amber); }
+
+    /* ── CART PANEL ── */
+    .overlay { position: fixed; inset: 0; z-index: 800; background: rgba(20,10,5,0.6); backdrop-filter: blur(4px); display: none; align-items: flex-start; justify-content: flex-end; }
+    .overlay.open { display: flex; }
+    .cart-panel { width: min(100vw, 440px); height: 100vh; background: var(--warm-white); display: flex; flex-direction: column; box-shadow: -8px 0 40px rgba(0,0,0,0.25); animation: slideInRight 0.35s ease both; }
+    .cart-header { padding: 1.5rem 1.5rem 1rem; border-bottom: 1px solid var(--tan-light); display: flex; align-items: center; justify-content: space-between; }
+    .cart-header h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--brown-dark); display: flex; align-items: center; gap: 0.5rem; }
+    .cart-items { flex: 1; overflow-y: auto; padding: 1rem 1.5rem; }
+    .cart-empty { text-align: center; padding: 4rem 1rem; color: var(--text-light); }
+    .cart-empty p { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+    .cart-item { display: flex; gap: 1rem; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--tan-light); }
+    .cart-item-photo { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--tan-light); }
+    .cart-item-info { flex: 1; }
+    .cart-item-name { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 700; color: var(--brown-dark); }
+    .cart-item-price { font-size: 0.82rem; color: var(--text-light); }
+    .cart-item-qty { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.4rem; }
+    .qty-btn { background: var(--tan-light); border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; font-size: 1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; color: var(--brown-dark); transition: background 0.2s; }
+    .qty-btn:hover { background: var(--amber); color: #fff; }
+    .qty-val { font-weight: 700; font-size: 0.9rem; min-width: 20px; text-align: center; }
+    .cart-item-total { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--brown-dark); }
+    .btn-remove { background: none; border: none; color: var(--text-light); cursor: pointer; font-size: 1rem; padding: 0.2rem; transition: color 0.2s; display: flex; align-items: center; justify-content: center; }
+    .btn-remove:hover { color: #c00; }
+    .cart-footer { padding: 1.5rem; border-top: 1px solid var(--tan-light); }
+    .cart-summary { margin-bottom: 1.2rem; }
+    .cart-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-mid); }
+    .cart-total { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 900; color: var(--brown-dark); border-top: 2px solid var(--tan-light); padding-top: 0.75rem; margin-top: 0.75rem; }
+    .btn-checkout { width: 100%; background: var(--amber); color: #fff; border: none; padding: 1rem; border-radius: 14px; font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; transition: background 0.2s, transform 0.15s; }
+    .btn-checkout:hover { background: var(--amber-light); transform: translateY(-1px); }
+    .cart-cod-note { font-size: 0.75rem; text-align: center; color: var(--text-light); margin-top: 0.7rem; }
+
+    /* ── AUTH MODAL ── */
+    .auth-overlay { position: fixed; inset: 0; z-index: 900; background: rgba(20,10,5,0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .auth-overlay.open { display: flex; }
+    .auth-box { background: var(--warm-white); border-radius: 28px; padding: 2.5rem; width: min(100%, 420px); box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .auth-box h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--brown-dark); margin-bottom: 0.3rem; }
+    .auth-box .auth-sub { font-size: 0.88rem; color: var(--text-light); margin-bottom: 1.8rem; }
+    .auth-switch { font-size: 0.85rem; text-align: center; color: var(--text-mid); margin-top: 1rem; }
+    .auth-switch a { color: var(--amber); font-weight: 700; cursor: pointer; text-decoration: none; }
+
+    /* ── CHECKOUT MODAL ── */
+    .checkout-overlay { position: fixed; inset: 0; z-index: 900; background: rgba(20,10,5,0.7); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .checkout-overlay.open { display: flex; }
+    .checkout-box { background: var(--warm-white); border-radius: 28px; padding: 2.5rem; width: min(100%, 520px); max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .checkout-box h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--brown-dark); margin-bottom: 1.5rem; }
+    .checkout-section-title { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--amber); margin: 1.5rem 0 0.8rem; }
+    .payment-toggle { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .pay-btn { flex: 1; border: 2px solid var(--tan-light); background: #fff; padding: 0.7rem 1rem; border-radius: 12px; cursor: pointer; font-size: 0.88rem; font-weight: 700; color: var(--text-mid); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.4rem; }
+    .pay-btn.active       { border-color: var(--amber);      background: rgba(200,115,26,0.08); color: var(--amber); }
+    .pay-btn.gcash-active { border-color: var(--gcash-blue); background: rgba(0,116,224,0.07);  color: var(--gcash-blue); }
+    .gcash-info { background: linear-gradient(135deg, #e8f4ff, #d0e8ff); border: 1.5px solid var(--gcash-blue); border-radius: 12px; padding: 1rem; font-size: 0.85rem; display: none; margin-bottom: 1rem; }
+    .gcash-info.show { display: block; }
+    .gcash-info .gcash-num { font-size: 1.3rem; font-weight: 900; color: var(--gcash-blue); letter-spacing: 0.05em; }
+    .gcash-info .gcash-name { font-size: 0.78rem; color: #333; margin-top: 0.2rem; }
+    .cod-badge { background: var(--tan-light); border: 1px solid var(--tan); border-radius: 12px; padding: 1rem; display: flex; align-items: center; gap: 0.75rem; color: var(--brown-mid); font-size: 0.88rem; margin-bottom: 1rem; }
+    .fulfillment-toggle { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+    .fulfill-btn { flex: 1; border: 2px solid var(--tan-light); background: #fff; padding: 0.65rem 1rem; border-radius: 12px; cursor: pointer; font-size: 0.85rem; font-weight: 700; color: var(--text-mid); transition: all 0.2s; }
+    .fulfill-btn.active { border-color: var(--amber); background: rgba(200,115,26,0.08); color: var(--amber); }
+    .order-success { text-align: center; padding: 2rem 0; }
+    .order-success h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--brown-dark); margin-bottom: 0.5rem; }
+    .order-success p { color: var(--text-mid); font-size: 0.9rem; line-height: 1.6; }
+    .order-id { background: var(--tan-light); border-radius: 10px; padding: 0.6rem 1rem; display: inline-block; font-weight: 700; margin: 1rem 0; font-size: 0.9rem; color: var(--brown-dark); }
+
+    /* ── CANCEL CONFIRM ── */
+    .cancel-confirm-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(20,10,5,0.75); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .cancel-confirm-overlay.open { display: flex; }
+    .cancel-confirm-box { background: var(--warm-white); border-radius: 24px; padding: 2.2rem; width: min(100%, 400px); text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .cancel-confirm-box h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--brown-dark); margin-bottom: 0.5rem; }
+    .cancel-confirm-box p { font-size: 0.88rem; color: var(--text-mid); line-height: 1.6; margin-bottom: 1.5rem; }
+    .cancel-btn-row { display: flex; gap: 0.75rem; justify-content: center; }
+    .btn-keep { background: var(--brown-dark); color: var(--cream); border: none; padding: 0.7rem 1.6rem; border-radius: 30px; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .btn-keep:hover { background: var(--brown-mid); }
+    .btn-confirm-cancel { background: #dc3545; color: #fff; border: none; padding: 0.7rem 1.6rem; border-radius: 30px; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .btn-confirm-cancel:hover { background: #b02a37; }
+
+    /* ── SELLER PANEL ── */
+    .seller-panel-overlay { position: fixed; inset: 0; z-index: 950; background: rgba(20,10,5,0.75); backdrop-filter: blur(5px); display: none; align-items: flex-start; justify-content: flex-start; padding: 1rem; }
+    .seller-panel-overlay.open { display: flex; }
+    .seller-panel { width: min(100vw, 620px); max-height: 94vh; overflow-y: auto; background: var(--warm-white); border-radius: 24px; padding: 2rem; box-shadow: 0 20px 60px rgba(0,0,0,0.35); margin: auto; animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .seller-panel h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--brown-dark); margin-bottom: 0.3rem; }
+    .seller-panel .sp-sub { font-size: 0.82rem; color: var(--text-light); margin-bottom: 1rem; }
+    .sp-tabs { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-bottom: 1.5rem; border-bottom: 2px solid var(--tan-light); padding-bottom: 0.8rem; }
+    .sp-tab { background: none; border: none; padding: 0.5rem 0.9rem; border-radius: 20px; cursor: pointer; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-light); transition: background 0.2s, color 0.2s; display: flex; align-items: center; gap: 0.3rem; }
+    .sp-tab.active { background: var(--brown-dark); color: var(--cream); }
+    .sp-tab:hover:not(.active) { background: var(--tan-light); color: var(--brown-dark); }
+    .sp-tab-content { display: none; }
+    .sp-tab-content.active { display: block; }
+    .approval-card { background: #fff; border-radius: 16px; padding: 1.2rem; border: 1.5px solid var(--tan-light); margin-bottom: 1rem; }
+    .approval-card-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.7rem; }
+    .approval-card-id { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--brown-dark); font-size: 0.95rem; display: flex; align-items: center; gap: 0.4rem; }
+    .approval-card-type { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 10px; display: flex; align-items: center; gap: 0.2rem; }
+    .approval-type-retail    { background: #cfe2ff; color: #084298; }
+    .approval-type-wholesale { background: #fff0d6; color: #7a4900; }
+    .approval-card-items { font-size: 0.82rem; color: var(--text-mid); margin-bottom: 0.8rem; }
+    .approval-card-total { font-family: 'Playfair Display', serif; font-weight: 900; color: var(--brown-dark); font-size: 1rem; margin-bottom: 0.8rem; }
+    .approval-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .btn-approve { background: #198754; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.2rem; }
+    .btn-approve:hover { background: #146c43; }
+    .btn-reject { background: #dc3545; color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 0.2rem; }
+    .btn-reject:hover { background: #b02a37; }
+    .btn-advance { background: var(--amber); color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: background 0.2s; }
+    .btn-advance:hover { background: var(--amber-light); }
+    .no-pending { text-align: center; padding: 2rem 1rem; color: var(--text-light); font-size: 0.9rem; }
+    .orders-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .orders-table th { background: var(--brown-dark); color: var(--cream); padding: 0.6rem 0.8rem; text-align: left; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .orders-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--tan-light); color: var(--text-mid); vertical-align: top; }
+    .orders-table tr:hover td { background: var(--cream); }
+    .orders-table-wrap { overflow-x: auto; border-radius: 12px; border: 1.5px solid var(--tan-light); }
+    .customer-card { background: #fff; border-radius: 14px; padding: 1rem; border: 1.5px solid var(--tan-light); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .cust-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--amber); color: #fff; font-size: 1.1rem; font-weight: 900; display: grid; place-items: center; flex-shrink: 0; }
+    .cust-info { flex: 1; }
+    .cust-name { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--brown-dark); font-size: 0.95rem; }
+    .cust-details { font-size: 0.78rem; color: var(--text-light); margin-top: 0.2rem; }
+    .cust-orders-count { font-size: 0.72rem; background: var(--tan-light); color: var(--brown-mid); padding: 0.2rem 0.6rem; border-radius: 20px; font-weight: 700; }
+    .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .report-card { background: #fff; border-radius: 14px; padding: 1.2rem; border: 1.5px solid var(--tan-light); text-align: center; }
+    .report-card .r-val { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--brown-dark); }
+    .report-card .r-lbl { font-size: 0.72rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.2rem; }
+    .report-section-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin: 1.2rem 0 0.6rem; }
+    .top-products-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .top-products-list li { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-mid); padding: 0.4rem 0.6rem; background: var(--cream); border-radius: 8px; }
+    .source-badge { display: inline-flex; align-items: center; gap: 0.2rem; padding: 0.2rem 0.6rem; border-radius: 10px; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+    .source-fb     { background: #1877f2; color: #fff; }
+    .source-direct { background: var(--amber); color: #fff; }
+    .source-online { background: #198754; color: #fff; }
+    .manual-order-form { display: flex; flex-direction: column; gap: 0.8rem; }
+    .manual-order-items { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
+    .manual-item-row { display: flex; gap: 0.5rem; align-items: center; }
+    .manual-item-row select { flex: 1; border: 1.5px solid var(--tan-light); background: #fff; padding: 0.5rem 0.7rem; border-radius: 10px; font-size: 0.85rem; color: var(--brown-dark); font-family: 'Lato', sans-serif; }
+    .manual-item-row input[type="number"] { width: 60px; border: 1.5px solid var(--tan-light); background: #fff; padding: 0.5rem; border-radius: 10px; font-size: 0.85rem; color: var(--brown-dark); font-family: 'Lato', sans-serif; }
+    .btn-rm-item { background: none; border: 1.5px solid #dc3545; color: #dc3545; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .btn-add-item { background: none; border: 1.5px dashed var(--amber); color: var(--amber); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; transition: background 0.2s, color 0.2s; margin-top: 0.3rem; display: inline-flex; align-items: center; gap: 0.3rem; }
+    .btn-add-item:hover { background: var(--amber); color: #fff; }
+    .btn-seller-access { background: var(--brown-dark); color: var(--cream); border: none; padding: 0.5rem 1.2rem; border-radius: 30px; cursor: pointer; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; transition: background 0.2s; }
+    .btn-seller-access:hover { background: var(--amber); }
+
+    /* ── SELLER LOGIN ── */
+    .seller-login-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(20,10,5,0.82); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .seller-login-overlay.open { display: flex; }
+    .seller-login-box { background: var(--warm-white); border-radius: 28px; padding: 2.5rem; width: min(100%, 400px); box-shadow: 0 24px 64px rgba(0,0,0,0.35); animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; text-align: center; }
+    .seller-login-box h2 { font-family: 'Playfair Display', serif; font-size: 1.7rem; color: var(--brown-dark); margin-bottom: 0.3rem; }
+    .seller-login-box .slb-sub { font-size: 0.85rem; color: var(--text-light); margin-bottom: 1.8rem; }
+    .seller-login-error { background: #f8d7da; color: #842029; border-radius: 10px; padding: 0.6rem 1rem; font-size: 0.83rem; font-weight: 700; margin-bottom: 1rem; display: none; }
+    .seller-login-error.show { display: block; }
+
+    /* ── RATING MODAL ── */
+    .rating-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(20,10,5,0.75); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .rating-overlay.open { display: flex; }
+    .rating-box { background: var(--warm-white); border-radius: 24px; padding: 2rem; width: min(100%, 400px); text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .rating-box h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--brown-dark); margin-bottom: 0.4rem; }
+    .rating-box p { font-size: 0.85rem; color: var(--text-light); margin-bottom: 1.2rem; }
+    .star-picker { display: flex; justify-content: center; gap: 0.4rem; margin-bottom: 1.2rem; }
+    .star-btn { font-size: 2rem; cursor: pointer; background: none; border: none; transition: transform 0.15s; color: #ddd; }
+    .star-btn.lit { color: var(--gold); }
+    .star-btn:hover { transform: scale(1.2); }
+    .rating-product-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1rem; color: var(--brown-dark); margin-bottom: 1rem; }
+
+    /* ── RECEIPT MODAL ── */
+    .receipt-overlay { position: fixed; inset: 0; z-index: 1010; background: rgba(20,10,5,0.8); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; padding: 1rem; }
+    .receipt-overlay.open { display: flex; }
+    .receipt-box { background: #fff; border-radius: 20px; padding: 2rem; width: min(100%, 460px); max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.4); animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+    .receipt-header { text-align: center; border-bottom: 2px dashed var(--tan-light); padding-bottom: 1rem; margin-bottom: 1rem; }
+    .receipt-logo { font-family: 'Dancing Script', cursive; font-size: 1.8rem; color: var(--brown-dark); }
+    .receipt-sub { font-size: 0.72rem; color: var(--text-light); letter-spacing: 0.12em; text-transform: uppercase; }
+    .receipt-id { font-weight: 700; font-size: 0.85rem; color: var(--amber); margin-top: 0.4rem; }
+    .receipt-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-mid); padding: 0.3rem 0; }
+    .receipt-row.bold { font-weight: 700; color: var(--brown-dark); }
+    .receipt-row.total-row { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 900; color: var(--brown-dark); border-top: 2px solid var(--brown-dark); padding-top: 0.5rem; margin-top: 0.3rem; }
+    .receipt-divider { border: none; border-top: 1px dashed var(--tan-light); margin: 0.8rem 0; }
+    .receipt-footer { text-align: center; font-size: 0.78rem; color: var(--text-light); margin-top: 1rem; }
+    .btn-print { background: var(--brown-dark); color: var(--cream); border: none; padding: 0.75rem 2rem; border-radius: 30px; font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: background 0.2s; width: 100%; margin-top: 1rem; }
+    .btn-print:hover { background: var(--amber); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeInLeft  { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes fadeInRight { from { opacity: 0; transform: translateX(40px);  } to { opacity: 1; transform: translateX(0); } }
+    @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    @keyframes popIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(200,115,26,0.5); } 50% { box-shadow: 0 0 0 10px rgba(200,115,26,0); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero-content  { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-jars     { grid-template-columns: 1fr 1fr; }
+      .about-grid    { grid-template-columns: 1fr; }
+      .footer-inner  { grid-template-columns: 1fr; gap: 2rem; }
+      .nav-links     { display: none; }
+      .reviews-filter-bar { flex-direction: column; align-items: flex-start; }
+      .reviews-summary-bar { flex-direction: column; }
+      .reviews-score-divider { width: 100%; height: 1px; }
+    }
+
+    @media print {
+      body > *:not(.receipt-overlay) { display: none !important; }
+      .receipt-overlay { position: static; display: block !important; background: none; }
+      .receipt-box { box-shadow: none; max-height: none; border: 1px solid #ccc; }
+      .btn-print, .btn-close { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast"></div>
+
+  <!-- ── ORDER TYPE BAR ── -->
+  <div class="order-type-bar">
+    <span class="order-type-label"><i data-lucide="shopping-bag" class="inline-icon"></i> Order Type:</span>
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="btnRetail"    onclick="setOrderType('retail')">Retail</button>
+      <button class="toggle-btn"        id="btnWholesale" onclick="setOrderType('wholesale')">Wholesale</button>
+    </div>
+    <span id="orderTypeNote" style="color:var(--tan);font-size:.78rem;">Standard pricing for individual buyers</span>
+  </div>
+  <div class="promo-banner hidden" id="promoBanner">
+    <i data-lucide="gift" class="inline-icon"></i> <strong>WHOLESALE PROMO:</strong> Buy 6 jars of any flavor &amp; get <strong>10% OFF</strong> your total! · Auto-applied at checkout. <i data-lucide="gift" class="inline-icon"></i>
+  </div>
+
+  <!-- ── NAVBAR ── -->
+  <nav>
+    <a class="nav-logo" href="#">
+      <div class="nav-logo-text">
+        <span class="brand">Lola Edna's</span>
+        <span class="sub">Homemade Food</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#products">Products</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#how">How to Order</a></li>
+      <li><a href="#all-reviews">Reviews</a></li>
+      <li><a href="#orders">My Orders</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn-seller-access" onclick="openSellerPanel()" title="Seller Panel"><i data-lucide="user-cog" class="inline-icon"></i> Seller</button>
+      <button class="btn-icon" id="cartBtn" title="View Cart" onclick="openCart()">
+        <i data-lucide="shopping-cart"></i>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <button class="btn-nav-login" onclick="openAuth()">Sign In</button>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <span class="hero-badge"><i data-lucide="sparkles" class="inline-icon"></i> No Preservatives · All Natural</span>
+        <h1 class="hero-title">
+          <span class="script">Lola Edna's</span>
+          Homemade<br>Goodness
+        </h1>
+        <p class="hero-desc">Authentic, handcrafted spreads and jams made with love — from Lola's kitchen to your table. Available in 320g jars, packed with flavor and zero artificial additives.</p>
+        <div class="hero-cta">
+          <a href="#products" class="btn-primary"><i data-lucide="shopping-bag" class="inline-icon"></i> Shop Now</a>
+          <a href="#about"    class="btn-outline">Our Story</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-jars">
+          <div class="jar-card"><img src="coffeepeanutbutter.jpg" class="jar-img" alt="Coffee Peanut Butter"><div class="jname">Coffee Peanut Butter</div><div class="jprice">320g — ₱120</div></div>
+          <div class="jar-card"><img src="cocojam.png" class="jar-img" alt="Special Coco Jam"><div class="jname">Special Coco Jam</div><div class="jprice">320g — ₱110</div></div>
+          <div class="jar-card"><img src="chocolatepeanutbutter.jpg" class="jar-img" alt="Chocolate Peanut Butter"><div class="jname">Chocolate Peanut Butter</div><div class="jprice">320g — ₱120</div></div>
+          <div class="jar-card"><img src="classicpeanutbutter.jpg" class="jar-img" alt="Classic Peanut Butter"><div class="jname">Classic Peanut Butter</div><div class="jprice">320g — ₱100</div></div>
+        </div>
+        <div class="hero-notice">
+          <i data-lucide="credit-card" class="inline-icon"></i> COD &amp; GCash accepted &nbsp;·&nbsp; <i data-lucide="truck" class="inline-icon"></i> Delivery or Pickup &nbsp;·&nbsp; <i data-lucide="package" class="inline-icon"></i> Min. 1 jar per order
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES STRIP ── -->
+  <div class="features">
+    <div class="features-inner">
+      <div class="feature-item"><i data-lucide="leaf" class="ficon"></i><div class="ftitle">All Natural</div><div class="fdesc">No preservatives added</div></div>
+      <div class="feature-item"><i data-lucide="chef-hat" class="ficon"></i><div class="ftitle">Homemade</div><div class="fdesc">Crafted by Lola Edna herself</div></div>
+      <div class="feature-item"><i data-lucide="banknote" class="ficon"></i><div class="ftitle">COD & GCash</div><div class="fdesc">Your preferred payment</div></div>
+      <div class="feature-item"><i data-lucide="store" class="ficon"></i><div class="ftitle">Delivery & Pickup</div><div class="fdesc">Choose what's convenient</div></div>
+      <div class="feature-item"><i data-lucide="smartphone" class="ficon"></i><div class="ftitle">Easy Ordering</div><div class="fdesc">Order online, anytime</div></div>
+    </div>
+  </div>
+
+  <!-- ── PRODUCTS ── -->
+  <section id="products">
+    <div class="section-inner">
+      <div class="products-header">
+        <div>
+          <div class="section-label">Our Products</div>
+          <h2 class="section-title">Freshly Made, <em>Everyday</em></h2>
+        </div>
+        <div class="filter-tabs">
+          <button class="filter-tab active" data-cat="all"           onclick="filterProducts('all', this)">All</button>
+          <button class="filter-tab"        data-cat="peanut-butter" onclick="filterProducts('peanut-butter', this)">Peanut Butter</button>
+          <button class="filter-tab"        data-cat="jam"           onclick="filterProducts('jam', this)">Jams</button>
+          <button class="filter-tab"        data-cat="sweets"        onclick="filterProducts('sweets', this)">Sweets</button>
+          <button class="filter-tab"        data-cat="appetizers"    onclick="filterProducts('appetizers', this)">Appetizers</button>
+        </div>
+      </div>
+      <div class="products-grid" id="productsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+  <section id="about">
+    <div class="section-inner">
+      <div class="about-grid">
+        <div class="about-visual">
+          <img src="lolaednapic.png" alt="Lola Edna" class="about-big-img" />
+          <div class="about-badge-float">
+            <div class="big-num">402</div>
+            <div class="label">Happy Followers</div>
+          </div>
+        </div>
+        <div>
+          <div class="section-label">Our Story</div>
+          <h2 class="section-title">Made with <em>Love</em> from Lola's Kitchen</h2>
+          <p class="section-desc">Lola Edna's Homemade Food started as a passion project — a desire to share the authentic flavors of Filipino homemade spreads with friends, family, and the community. Every jar is personally crafted using traditional recipes, with absolutely no preservatives or artificial flavors.</p>
+          <ul class="about-list">
+            <li>All products are handcrafted in small batches to ensure freshness and quality.</li>
+            <li>Sourced from trusted local ingredients — supporting Filipino farmers and suppliers.</li>
+            <li>No artificial flavors, no preservatives — just pure, natural goodness in every bite.</li>
+            <li>Proudly a Filipino home-based food business serving the local community.</li>
+          </ul>
+          <br>
+          <a href="#products" class="btn-primary" style="display:inline-flex;"><i data-lucide="shopping-cart" class="inline-icon"></i> Order Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section id="how">
+    <div class="section-inner">
+      <div class="section-label">Simple Process</div>
+      <h2 class="section-title">How to Order</h2>
+      <p class="section-desc">Ordering from Lola Edna's is easy — just a few steps and your favorite spread is on its way!</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">01</div><i data-lucide="clipboard-list" class="step-icon"></i><div class="step-title">Browse &amp; Select</div><div class="step-desc">Browse our product catalog and pick your favorite flavors. Add them to your cart.</div></div>
+        <div class="step"><div class="step-num">02</div><i data-lucide="shopping-cart" class="step-icon"></i><div class="step-title">Review Cart</div><div class="step-desc">Review your order, adjust quantities, and confirm everything looks good.</div></div>
+        <div class="step"><div class="step-num">03</div><i data-lucide="file-check" class="step-icon"></i><div class="step-title">Place Order</div><div class="step-desc">Fill in your delivery details and submit. Pay via COD or GCash.</div></div>
+        <div class="step"><div class="step-num">04</div><i data-lucide="truck" class="step-icon"></i><div class="step-title">Track &amp; Receive</div><div class="step-desc">Track your order status — from Preparing to Out for Delivery. Get your digital receipt!</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ALL REVIEWS SECTION ── -->
+  <section id="all-reviews">
+    <div class="section-inner">
+      <div class="reviews-page-header">
+        <div>
+          <div class="section-label"><i data-lucide="star" class="inline-icon"></i> Customer Feedback</div>
+          <h2 class="section-title">What Our Customers <em>Say</em> <span class="reviews-count-badge" id="totalReviewsBadge">0</span></h2>
+          <p class="section-desc">Real reviews from real customers who love Lola Edna's homemade goodness.</p>
+        </div>
+      </div>
+      <div class="reviews-summary-bar" id="reviewsSummaryBar">
+        <div class="reviews-overall-score">
+          <div class="reviews-overall-num" id="overallAvgNum">—</div>
+          <div class="reviews-overall-stars" id="overallStars">★★★★★</div>
+          <div class="reviews-overall-count" id="overallCount">0 reviews</div>
+        </div>
+        <div class="reviews-score-divider"></div>
+        <div class="reviews-bar-breakdown" id="starBreakdownBars"></div>
+      </div>
+      <div class="reviews-filter-bar">
+        <div class="reviews-filter-group">
+          <div class="reviews-filter-label"><i data-lucide="filter" class="inline-icon"></i> Filter by Stars</div>
+          <div class="star-filter-chips" id="starFilterChips">
+            <button class="star-chip active" data-star="all" onclick="setStarFilter('all', this)">All</button>
+            <button class="star-chip" data-star="5" onclick="setStarFilter('5', this)">★★★★★ 5</button>
+            <button class="star-chip" data-star="4" onclick="setStarFilter('4', this)">★★★★ 4</button>
+            <button class="star-chip" data-star="3" onclick="setStarFilter('3', this)">★★★ 3</button>
+            <button class="star-chip" data-star="2" onclick="setStarFilter('2', this)">★★ 2</button>
+            <button class="star-chip" data-star="1" onclick="setStarFilter('1', this)">★ 1</button>
+          </div>
+        </div>
+        <div class="reviews-filter-group">
+          <div class="reviews-filter-label"><i data-lucide="package" class="inline-icon"></i> Filter by Product</div>
+          <select class="product-filter-select" id="productFilterSelect" onchange="setProductFilter(this.value)">
+            <option value="all">All Products</option>
+          </select>
+        </div>
+        <div style="margin-left:auto;font-size:.8rem;color:var(--text-light);" id="reviewsResultCount"></div>
+      </div>
+      <div class="reviews-page-grid" id="reviewsPageGrid"></div>
+    </div>
+  </section>
+
+  <!-- ── MY ORDERS ── -->
+  <section id="orders">
+    <div class="section-inner">
+      <div class="section-label">Order Tracking</div>
+      <h2 class="section-title">My <em>Orders</em></h2>
+      <p class="section-desc">Track the status of your orders in real-time.</p>
+      <div id="ordersContainer">
+        <div class="no-orders-msg">No orders yet. <a href="#products" style="color:var(--amber);font-weight:700;">Start shopping!</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="fname">Lola Edna's</div>
+        <p class="fdesc">Authentic homemade food made with love. No preservatives, no artificial flavors — just pure, natural goodness for your family.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#products">Products</a></li>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#how">How to Order</a></li>
+          <li><a href="#all-reviews">Reviews</a></li>
+          <li><a href="#orders">My Orders</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#"><i data-lucide="message-circle" class="inline-icon"></i> Message on Facebook</a></li>
+          <li><a href="#"><i data-lucide="credit-card" class="inline-icon"></i> COD &amp; GCash Payment</a></li>
+          <li><a href="#"><i data-lucide="truck" class="inline-icon"></i> Delivery &amp; Pickup</a></li>
+          <li><a href="#"><i data-lucide="clock" class="inline-icon"></i> Mon–Sat, 8AM–6PM</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Lola Edna's Homemade Food. All rights reserved.</p>
+      <p>Developed by Latag, Malana, Pading, Soliveres.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ── CART PANEL ── -->
+  <div class="overlay" id="cartOverlay" onclick="handleCartOverlayClick(event)">
+    <div class="cart-panel" id="cartPanel">
+      <div class="cart-header">
+        <h2><i data-lucide="shopping-cart" class="inline-icon"></i> Your Cart</h2>
+        <button class="btn-close" onclick="closeCart()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="cart-items" id="cartItems">
+        <div class="cart-empty"><i data-lucide="shopping-cart" class="empty-icon"></i><p>Your cart is empty</p></div>
+      </div>
+      <div class="cart-footer" id="cartFooter" style="display:none;">
+        <div class="cart-summary">
+          <div class="cart-row"><span>Subtotal</span><span id="cartSubtotal">₱0.00</span></div>
+          <div class="cart-row"><span>Delivery</span><span>To be confirmed</span></div>
+          <div class="cart-total cart-row"><span>Total</span><span id="cartTotal">₱0.00</span></div>
+        </div>
+        <button class="btn-checkout" onclick="openCheckout()">Proceed to Checkout →</button>
+        <div class="cart-cod-note"><i data-lucide="credit-card" class="inline-icon"></i> COD or GCash accepted</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AUTH MODAL ── -->
+  <div class="auth-overlay" id="authOverlay" onclick="handleAuthOverlayClick(event)">
+    <div class="auth-box" id="authBox">
+      <h2 id="authTitle">Welcome Back</h2>
+      <p class="auth-sub" id="authSub">Sign in to track your orders</p>
+      <div id="authForm">
+        <div id="registerName" class="form-group" style="display:none;">
+          <label>Full Name</label>
+          <input type="text" id="inputName" placeholder="e.g. Maria Santos" />
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="inputEmail" placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="inputPassword" placeholder="••••••••" />
+        </div>
+        <button class="btn-primary" style="width:100%;justify-content:center;" onclick="handleAuth()">
+          <span id="authBtnText">Sign In</span>
+        </button>
+      </div>
+      <div class="auth-switch" id="authSwitch">
+        Don't have an account? <a onclick="toggleAuth()">Register here</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CHECKOUT MODAL ── -->
+  <div class="checkout-overlay" id="checkoutOverlay" onclick="handleCheckoutOverlayClick(event)">
+    <div class="checkout-box" id="checkoutBox">
+      <div id="checkoutForm">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
+          <h2>Checkout</h2>
+          <button class="btn-close" onclick="closeCheckout()"><i data-lucide="x"></i></button>
+        </div>
+        <div class="checkout-section-title">Delivery Information</div>
+        <div class="wholesale-note" id="wholesaleNoteCheckout"><i data-lucide="package" class="inline-icon"></i> <strong>Wholesale Order</strong> — Minimum 6 jars required. 10% promo discount applied automatically if 6+ jars in cart.</div>
+        <div class="form-group"><label>Full Name</label><input type="text" id="co-name" placeholder="Maria Santos" /></div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" id="co-phone" placeholder="09XX XXX XXXX" /></div>
+        <div class="checkout-section-title">Fulfillment Method</div>
+        <div class="fulfillment-toggle">
+          <button class="fulfill-btn active" id="btnDelivery" onclick="setFulfillment('delivery')"><i data-lucide="truck" class="inline-icon"></i> Delivery</button>
+          <button class="fulfill-btn"        id="btnPickup"   onclick="setFulfillment('pickup')"><i data-lucide="store" class="inline-icon"></i> Pickup</button>
+        </div>
+        <div id="addressGroup">
+          <div class="form-group"><label>Delivery Address</label><input type="text" id="co-address" placeholder="House No., Street, Barangay, City" /></div>
+        </div>
+        <div id="pickupNote" style="display:none;background:rgba(200,115,26,.1);border:1.5px solid var(--amber);border-radius:12px;padding:.8rem 1rem;font-size:.84rem;color:var(--brown-mid);margin-bottom:1rem;">
+          <i data-lucide="map-pin" class="inline-icon"></i> <strong>Pickup:</strong> Please pick up your order at Lola Edna's kitchen. We'll message you the exact schedule!
+        </div>
+        <div class="checkout-section-title">Preferred Delivery / Pickup Date</div>
+        <div class="form-group"><label>Choose Date &amp; Time</label><input type="datetime-local" id="co-datetime" /></div>
+        <div class="form-group"><label>Order Notes (Optional)</label><input type="text" id="co-notes" placeholder="e.g. Please ring the bell" /></div>
+        <div class="checkout-section-title">Payment Method</div>
+        <div class="payment-toggle">
+          <button class="pay-btn active" id="payBtnCOD"   onclick="setPayment('cod')"><i data-lucide="banknote" class="inline-icon"></i> COD</button>
+          <button class="pay-btn"        id="payBtnGcash" onclick="setPayment('gcash')"><i data-lucide="smartphone" class="inline-icon"></i> GCash</button>
+        </div>
+        <div class="cod-badge" id="codBadgeEl"><i data-lucide="banknote" class="inline-icon"></i> <span><strong>Cash on Delivery (COD)</strong> — Pay when your order arrives.</span></div>
+        <div class="gcash-info" id="gcashInfoEl">
+          <div style="font-size:.8rem;color:#0074e0;font-weight:700;letter-spacing:.06em;margin-bottom:.4rem;"><i data-lucide="smartphone" class="inline-icon"></i> GCASH PAYMENT DETAILS</div>
+          <div class="gcash-num">0917 123 4567</div>
+          <div class="gcash-name">Edna M. Santos · Lola Edna's Homemade Food</div>
+          <div style="font-size:.75rem;color:#555;margin-top:.5rem;"><i data-lucide="alert-circle" class="inline-icon" style="color:#856404;"></i> Please send your screenshot as proof of payment via Facebook message.</div>
+        </div>
+        <div id="checkoutOrderSummary" style="margin-bottom:1.2rem;"></div>
+        <button class="btn-checkout" onclick="placeOrder()"><i data-lucide="check-circle" class="inline-icon"></i> Place Order</button>
+      </div>
+      <div id="checkoutSuccess" style="display:none;">
+        <div style="display:flex;justify-content:flex-end;"><button class="btn-close" onclick="closeCheckout()"><i data-lucide="x"></i></button></div>
+        <div class="order-success">
+          <i data-lucide="check-circle" class="success-icon"></i>
+          <h3>Order Placed!</h3>
+          <p>Thank you! Your order is now <strong>awaiting seller approval</strong>. Lola Edna will confirm it shortly.</p>
+          <div class="order-id" id="successOrderId"></div>
+          <p style="font-size:.82rem;color:var(--text-light);">Track your order in the <a href="#orders" style="color:var(--amber);font-weight:700;" onclick="closeCheckout()">My Orders</a> section.</p>
+          <br>
+          <div style="display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;">
+            <button class="btn-primary"  style="margin:0;" onclick="viewReceipt()"><i data-lucide="receipt" class="inline-icon"></i> View Receipt</button>
+            <button class="btn-outline"  style="margin:0;color:var(--brown-dark);border-color:var(--brown-dark);" onclick="closeCheckout()">Continue Shopping</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CANCEL CONFIRM ── -->
+  <div class="cancel-confirm-overlay" id="cancelConfirmOverlay">
+    <div class="cancel-confirm-box">
+      <i data-lucide="alert-triangle" class="cancel-icon"></i>
+      <h3>Cancel Order?</h3>
+      <p>Are you sure you want to cancel order <strong id="cancelOrderIdDisplay"></strong>? This action cannot be undone.</p>
+      <div class="cancel-btn-row">
+        <button class="btn-keep"           onclick="closeCancelConfirm()">Keep Order</button>
+        <button class="btn-confirm-cancel" onclick="confirmCancelOrder()">Yes, Cancel It</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SELLER PANEL ── -->
+  <div class="seller-panel-overlay" id="sellerPanelOverlay" onclick="handleSellerOverlayClick(event)">
+    <div class="seller-panel" id="sellerPanel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;">
+        <div>
+          <h2><i data-lucide="layout-dashboard" class="inline-icon"></i> Seller Dashboard</h2>
+          <div class="sp-sub">Manage orders, customers, and reports</div>
+        </div>
+        <button class="btn-close" onclick="closeSellerPanel()"><i data-lucide="x"></i></button>
+      </div>
+      <div class="sp-tabs">
+        <button class="sp-tab active" onclick="switchSpTab('pending',   this)"><i data-lucide="clock"       class="inline-icon"></i> Pending</button>
+        <button class="sp-tab"        onclick="switchSpTab('allorders', this)"><i data-lucide="package"     class="inline-icon"></i> All Orders</button>
+        <button class="sp-tab"        onclick="switchSpTab('manual',    this)"><i data-lucide="pen-tool"    class="inline-icon"></i> Manual Order</button>
+        <button class="sp-tab"        onclick="switchSpTab('customers', this)"><i data-lucide="users"       class="inline-icon"></i> Customers</button>
+        <button class="sp-tab"        onclick="switchSpTab('reports',   this)"><i data-lucide="bar-chart-2" class="inline-icon"></i> Reports</button>
+        <button class="sp-tab"        onclick="switchSpTab('stock',     this)"><i data-lucide="tags"        class="inline-icon"></i> Stock</button>
+      </div>
+      <div class="sp-tab-content active" id="sp-pending"><div id="sellerOrdersList"><div class="no-pending">No pending orders yet.</div></div></div>
+      <div class="sp-tab-content" id="sp-allorders">
+        <div class="orders-table-wrap">
+          <table class="orders-table" id="allOrdersTable">
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="allOrdersBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="sp-tab-content" id="sp-manual">
+        <div style="font-size:.8rem;color:var(--text-light);margin-bottom:1rem;">Enter an order directly on behalf of a customer (walk-in, phone call, or Facebook message).</div>
+        <div class="manual-order-form">
+          <div class="form-group"><label>Customer Name</label><input type="text" id="mo-name" placeholder="Maria Santos" /></div>
+          <div class="form-group"><label>Phone</label><input type="tel" id="mo-phone" placeholder="09XX XXX XXXX" /></div>
+          <div class="form-group"><label>Address / Notes</label><input type="text" id="mo-address" placeholder="Delivery address or 'Pickup'" /></div>
+          <div class="form-group"><label>Order Source</label><select id="mo-source"><option value="direct"> Walk-in / Direct</option><option value="fb"> Facebook Message</option><option value="phone"> Phone Call</option></select></div>
+          <div class="form-group"><label>Payment Method</label><select id="mo-payment"><option value="cod"> Cash on Delivery</option><option value="gcash"> GCash</option><option value="cash"> Cash (Walk-in)</option></select></div>
+          <div class="form-group"><label>Order Type</label><select id="mo-type"><option value="retail">Retail</option><option value="wholesale">Wholesale</option></select></div>
+          <div>
+            <label style="display:block;font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mid);margin-bottom:.5rem;">Items</label>
+            <div class="manual-order-items" id="moItemsContainer">
+              <div class="manual-item-row">
+                <select class="mo-product-sel"><option value="">— Select Product —</option></select>
+                <input type="number" min="1" value="1" class="mo-qty-inp" />
+                <button class="btn-rm-item" onclick="removeMoItem(this)"><i data-lucide="trash-2" class="inline-icon" style="margin:0;"></i></button>
+              </div>
+            </div>
+            <button class="btn-add-item" onclick="addMoItem()"><i data-lucide="plus" class="inline-icon"></i> Add Item</button>
+          </div>
+          <div class="form-group"><label>Preferred Delivery Date</label><input type="datetime-local" id="mo-datetime" /></div>
+          <button class="btn-primary" style="width:100%;justify-content:center;" onclick="submitManualOrder()"><i data-lucide="check" class="inline-icon"></i> Submit Order</button>
+        </div>
+      </div>
+      <div class="sp-tab-content" id="sp-customers">
+        <div style="font-size:.8rem;color:var(--text-light);margin-bottom:1rem;">All customers who have placed orders (contact reference list).</div>
+        <div id="customersList"><div class="no-pending">No customers yet.</div></div>
+      </div>
+      <div class="sp-tab-content" id="sp-reports">
+        <div class="report-grid" id="reportSummary"></div>
+        <div class="report-section-title">Top Products Ordered</div>
+        <ul class="top-products-list" id="topProductsList"></ul>
+        <div class="report-section-title">Order Sources</div>
+        <ul class="top-products-list" id="sourcesList"></ul>
+        <div class="report-section-title">Payment Methods</div>
+        <ul class="top-products-list" id="paymentsList"></ul>
+      </div>
+      <div class="sp-tab-content" id="sp-stock">
+        <div style="font-size:.8rem;color:var(--text-light);margin-bottom:1rem;">Manage product stock levels.</div>
+        <div id="stockList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SELLER LOGIN ── -->
+  <div class="seller-login-overlay" id="sellerLoginOverlay">
+    <div class="seller-login-box">
+      <i data-lucide="lock" class="seller-login-icon"></i>
+      <h2>Seller Access</h2>
+      <p class="slb-sub">Only the owner/admin can access the Seller Dashboard. Please log in to continue.</p>
+      <div class="seller-login-error" id="sellerLoginError">Incorrect username or password.</div>
+      <div class="form-group" style="text-align:left;"><label>Username</label><input type="text" id="sellerLoginUser" placeholder="admin" autocomplete="off" /></div>
+      <div class="form-group" style="text-align:left;"><label>Password</label><input type="password" id="sellerLoginPass" placeholder="password" onkeydown="if(event.key==='Enter')doSellerLogin()" /></div>
+      <button class="btn-primary"  style="width:100%;justify-content:center;margin-bottom:.8rem;" onclick="doSellerLogin()">Login to Dashboard</button>
+      <button class="btn-outline"  style="width:100%;justify-content:center;color:var(--brown-dark);border-color:var(--tan);" onclick="closeSellerLogin()">Cancel</button>
+    </div>
+  </div>
+
+  <!-- ── RATING MODAL ── -->
+  <div class="rating-overlay" id="ratingOverlay">
+    <div class="rating-box">
+      <div style="display:flex;justify-content:flex-end;"><button class="btn-close" onclick="closeRating()"><i data-lucide="x"></i></button></div>
+      <h3>Rate This Product</h3>
+      <div class="rating-product-name" id="ratingProductName"></div>
+      <p>How was your experience with this product?</p>
+      <div style="margin-bottom:0.8rem;">
+        <label style="font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mid);display:block;margin-bottom:.4rem;">Choose Product</label>
+        <select id="ratingProductSelect" style="width:100%;border:2px solid var(--tan-light);background:#fff;padding:.6rem 1rem;border-radius:12px;font-size:.9rem;color:var(--brown-dark);font-family:'Lato',sans-serif;" onchange="switchRatingProduct(this.value)"></select>
+      </div>
+      <div class="star-picker" id="starPicker">
+        <button class="star-btn" data-val="1" onclick="selectStar(1)">&#x2605;</button>
+        <button class="star-btn" data-val="2" onclick="selectStar(2)">&#x2605;</button>
+        <button class="star-btn" data-val="3" onclick="selectStar(3)">&#x2605;</button>
+        <button class="star-btn" data-val="4" onclick="selectStar(4)">&#x2605;</button>
+        <button class="star-btn" data-val="5" onclick="selectStar(5)">&#x2605;</button>
+      </div>
+      <div class="form-group" style="margin-top:1rem;">
+        <label style="font-size:.8rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-mid);display:block;margin-bottom:.5rem;">Your Message (optional)</label>
+        <textarea id="ratingMessage" placeholder="Share your experience with this product..."
+          style="width:100%;border:2px solid var(--tan-light);border-radius:12px;padding:.75rem 1rem;font-size:.9rem;font-family:'Lato',sans-serif;resize:vertical;min-height:80px;color:var(--brown-dark);"
+          onfocus="this.style.borderColor='var(--amber)'" onblur="this.style.borderColor='var(--tan-light)'"></textarea>
+      </div>
+      <button class="btn-primary" style="width:100%;justify-content:center;" onclick="submitRating()">Submit Review</button>
+    </div>
+  </div>
+
+  <!-- ── RECEIPT MODAL ── -->
+  <div class="receipt-overlay" id="receiptOverlay">
+    <div class="receipt-box" id="receiptBox">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:.5rem;"><button class="btn-close" onclick="closeReceipt()"><i data-lucide="x"></i></button></div>
+      <div class="receipt-header">
+        <div class="receipt-logo">Lola Edna's</div>
+        <div class="receipt-sub">Homemade Food · Digital Receipt</div>
+        <div class="receipt-id" id="rcptOrderId"></div>
+        <div style="font-size:.75rem;color:var(--text-light);margin-top:.3rem;" id="rcptDate"></div>
+      </div>
+      <div id="rcptCustomer"></div>
+      <hr class="receipt-divider">
+      <div id="rcptItems"></div>
+      <hr class="receipt-divider">
+      <div id="rcptTotals"></div>
+      <div class="receipt-footer">
+        <p><i data-lucide="heart" class="inline-icon" style="color:var(--amber);fill:var(--amber);"></i> Salamat! Thank you for supporting Lola Edna's Homemade Food.</p>
+        <p style="margin-top:.3rem;">No preservatives · All natural · Made with love <i data-lucide="heart" class="inline-icon" style="color:var(--amber);fill:var(--amber);"></i></p>
+      </div>
+      <button class="btn-print" onclick="window.print()"><i data-lucide="printer" class="inline-icon"></i> Print Receipt</button>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const PRODUCTS = [
+      { id: 1, name: 'Classic Peanut Butter',   cat: 'peanut-butter', emoji: '🥜', image: 'classicpeanutbutter.jpg',   price: 100, weight: '320g',     badge: 'Bestseller',   stock: 25 , desc: 'Our original recipe — rich, creamy peanut butter made from freshly roasted peanuts. Perfect on bread, pandesal, or eaten straight from the jar!' },
+      { id: 2, name: 'Coffee Peanut Butter',    cat: 'peanut-butter', emoji: '☕', image: 'coffeepeanutbutter.jpg',    price: 120, weight: '320g',     badge: 'Fan Favorite', stock: 18,  desc: 'A bold fusion of creamy peanut butter with aromatic coffee — the perfect pick-me-up spread for your morning toast or merienda.' },
+      { id: 3, name: 'Chocolate Peanut Butter', cat: 'peanut-butter', emoji: '🍫', image: 'chocolatepeanutbutter.jpg', price: 120, weight: '320g',     badge: 'Sweet Treat',  stock: 3,   desc: 'The ultimate indulgence — smooth peanut butter swirled with rich cocoa. A crowd favorite for kids and the young at heart.' },
+      { id: 4, name: 'Special Coco Jam',        cat: 'jam',           emoji: '🥥', image: 'cocojam.png',               price: 110, weight: '320g',     badge: 'All Natural',  stock: 12,  desc: 'A classic Filipino delicacy — silky, sweet coconut jam made from fresh coconut milk and muscovado sugar. No artificial flavors, just pure tradition.' },
+      { id: 5, name: 'Milky Pastillas',          cat: 'sweets',        emoji: '🍬', image: 'pastillas.png',             price: 80,  weight: 'per pack', badge: 'Homemade',     stock: 0,   desc: 'Soft, melt-in-your-mouth milk candies wrapped in colorful paper. Made from fresh carabao milk — a beloved Filipino childhood treat.' },
+      { id: 6, name: 'Sweet Tamarind',           cat: 'sweets',        emoji: '🟤', image: 'sweettamarind.png',         price: 60,  weight: 'per pack', badge: 'Classic',      stock: 8,   desc: 'Tangy-sweet tamarind candies coated in sugar — the ultimate Filipino snack. A perfect balance of sour and sweet in every bite.' },
+      { id: 7, name: 'Special Embotido',         cat: 'appetizers',    emoji: '🥩', image: 'embotido.png',              price: 180, weight: 'per roll', badge: 'Special',      stock: 6,   desc: "Lola Edna's signature Filipino meatloaf — packed with ground pork, raisins, and bell peppers, wrapped and steamed to perfection." },
+      { id: 8, name: 'Atsara',                   cat: 'appetizers',    emoji: '🥕', image: 'atsara.png',                price: 90,  weight: '320g',     badge: 'Tangy & Fresh',stock: 15,  desc: 'Crunchy pickled green papaya with carrots, bell peppers, and ginger — the perfect sweet and tangy condiment to pair with any fried or grilled dish.' },
+    ];
+
+    const ratings = {};
+    PRODUCTS.forEach(p => { ratings[p.id] = { total: 0, count: 0, reviews: [] }; });
+
+    // Seed sample reviews
+    ratings[1] = { total: 23, count: 5, reviews: [
+      { name: 'Maria Santos',  stars: 5, message: 'Masarap talaga! Perfect sa pandesal every morning. Will definitely order again!', date: '2025-03-28', emoji: '🥜' },
+      { name: 'Jose Reyes',    stars: 4, message: 'Very creamy and not too sweet. Great value for the price!',                       date: '2025-03-20', emoji: '🥜' },
+      { name: 'Ana Cruz',      stars: 5, message: 'Pinaka-masarap na peanut butter na natikman ko. Lola Edna never disappoints!',    date: '2025-03-10', emoji: '🥜' },
+    ]};
+    ratings[2] = { total: 19, count: 4, reviews: [
+      { name: 'Carlo Dela Rosa', stars: 5, message: 'The coffee flavor is so strong and good! Perfect with my morning coffee too.', date: '2025-03-25', emoji: '☕' },
+      { name: 'Luisa Flores',    stars: 5, message: 'Sobrang sarap! My kids love this. Ordered 3 jars already.',                    date: '2025-03-18', emoji: '☕' },
+    ]};
+    ratings[4] = { total: 16, count: 4, reviews: [
+      { name: 'Rosa Mendoza',   stars: 4, message: "Authentic coco jam taste! Reminds me of my lola's cooking. Sarap!", date: '2025-03-22', emoji: '🥥' },
+      { name: 'Pedro Bautista', stars: 4, message: 'Good quality, arrived well-packed. Will order more soon!',          date: '2025-03-15', emoji: '🥥' },
+    ]};
+
+    /* ── APP STATE ── */
+    let cart              = [];
+    let isRegister        = false;
+    let currentUser       = null;
+    let orders            = [];
+    let orderType         = 'retail';
+    let cancelTargetId    = null;
+    let paymentMethod     = 'cod';
+    let fulfillmentMethod = 'delivery';
+    let ratingTargetId    = null;
+    let ratingTargetOrderId = null;
+    let selectedStar      = 0;
+    let lastPlacedOrder   = null;
+
+    /* Reviews page filter state */
+    let reviewsStarFilter    = 'all';
+    let reviewsProductFilter = 'all';
+    let reviewsExpanded      = false;
+
+    const SELLER_CREDENTIALS = { username: 'admin', password: 'lolaedna2025' };
+    let sellerAuthenticated = false;
+
+    /* ── HELPERS ── */
+    function refreshIcons() { if (window.lucide) lucide.createIcons(); }
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.innerHTML = msg;
+      if (window.lucide) { lucide.createIcons({ root: t }); }
+      t.classList.add('show');
+      clearTimeout(t._tid);
+      t._tid = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+    function activeFilterCat() { return document.querySelector('.filter-tab.active')?.dataset.cat || 'all'; }
+
+    /* ── ORDER TYPE ── */
+    function setOrderType(type) {
+      orderType = type;
+      document.getElementById('btnRetail').classList.toggle('active', type === 'retail');
+      document.getElementById('btnWholesale').classList.toggle('active', type === 'wholesale');
+      document.getElementById('promoBanner').classList.toggle('hidden', type === 'retail');
+      document.getElementById('orderTypeNote').textContent = type === 'retail'
+        ? 'Standard pricing for individual buyers'
+        : 'Bulk pricing with promo discount for 6+ jars';
+      cart.forEach(item => {
+        const product = PRODUCTS.find(p => p.id === item.id);
+        item.price = type === 'wholesale' ? Math.round(product.price * 0.9) : product.price;
+      });
+      renderProducts(activeFilterCat());
+      updateCartUI();
+    }
+
+    /* ── PRODUCTS ── */
+    function renderProducts(filter = 'all') {
+      const grid     = document.getElementById('productsGrid');
+      const filtered = filter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === filter);
+
+      grid.innerHTML = filtered.map(p => {
+        const wsPrice      = Math.round(p.price * 0.9);
+        const displayPrice = orderType === 'wholesale' ? wsPrice : p.price;
+        const priceLabel   = orderType === 'wholesale'
+          ? `₱${displayPrice}<span> / jar</span> <span class="wholesale-badge">-10%</span>`
+          : `₱${displayPrice}<span> / jar</span>`;
+
+        const catLabel = { 'peanut-butter': 'Peanut Butter', jam: 'Jam', sweets: 'Sweets', appetizers: 'Appetizers' }[p.cat];
+
+        const r     = ratings[p.id];
+        const avg   = r.count > 0 ? r.total / r.count : 0;
+        const stars = [1,2,3,4,5].map(s => `<span style="color:${s <= Math.round(avg) ? 'var(--gold)' : '#ddd'}">★</span>`).join('');
+
+        const stockCls = p.stock === 0 ? 'stock-out' : p.stock <= 4 ? 'stock-low' : 'stock-ok';
+        let stockLabel = '';
+        if (p.stock === 0)      stockLabel = `<i data-lucide="x-circle" class="inline-icon"></i> Out of Stock`;
+        else if (p.stock <= 4)  stockLabel = `<i data-lucide="alert-triangle" class="inline-icon"></i> Only ${p.stock} left`;
+        else                    stockLabel = `<i data-lucide="check-circle" class="inline-icon"></i> In Stock`;
+
+        return `
+          <div class="product-card">
+            <div class="product-img">
+              <img src="${p.image}" alt="${p.name}" class="product-photo" />
+              ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+              <span class="stock-badge ${stockCls}">${stockLabel}</span>
+            </div>
+            <div class="product-body">
+              <div class="product-cat">${catLabel}</div>
+              <div class="product-name">${p.name}</div>
+              <div class="product-desc">${p.desc}</div>
+              <div class="product-meta">
+                <div class="product-weight"><i data-lucide="package" class="inline-icon"></i> Available in ${p.weight}</div>
+                <div class="product-rating-display">
+                  <span class="stars-display">${stars}</span>
+                  <span class="rating-count">${r.count > 0 ? `${avg.toFixed(1)} (${r.count})` : 'No ratings yet'}</span>
+                </div>
+                <div class="product-footer">
+                  <div class="product-price">${priceLabel}</div>
+                  <button class="btn-add" onclick="addToCart(${p.id})" title="Add to Cart" ${p.stock === 0 ? 'disabled' : ''}>${p.stock === 0 ? '<i data-lucide="ban"></i>' : '<i data-lucide="plus"></i>'}</button>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+      refreshIcons();
+    }
+
+    function filterProducts(cat, btn) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      renderProducts(cat);
+    }
+
+    /* ── CART ── */
+    function addToCart(id) {
+      const product = PRODUCTS.find(p => p.id === id);
+      if (product.stock === 0) { showToast('<i data-lucide="x-circle" class="inline-icon"></i> This item is out of stock.'); return; }
+      const price    = orderType === 'wholesale' ? Math.round(product.price * 0.9) : product.price;
+      const existing = cart.find(i => i.id === id);
+      if (existing) existing.qty++;
+      else cart.push({ ...product, price, qty: 1 });
+      updateCartUI();
+      showToast(`<i data-lucide="check-circle" class="inline-icon"></i> ${product.name} added to cart!`);
+    }
+    function removeFromCart(id) { cart = cart.filter(i => i.id !== id); updateCartUI(); }
+    function updateQty(id, delta) {
+      const item = cart.find(i => i.id === id);
+      if (!item) return;
+      item.qty += delta;
+      if (item.qty <= 0) removeFromCart(id); else updateCartUI();
+    }
+    function getCartTotal() { return cart.reduce((s, i) => s + i.price * i.qty, 0); }
+    function getCartCount() { return cart.reduce((s, i) => s + i.qty, 0); }
+    function updateCartUI() {
+      const count = getCartCount();
+      const badge = document.getElementById('cartBadge');
+      badge.textContent = count;
+      badge.classList.toggle('visible', count > 0);
+      const itemsEl  = document.getElementById('cartItems');
+      const footerEl = document.getElementById('cartFooter');
+      const total    = getCartTotal();
+      if (cart.length === 0) { itemsEl.innerHTML = `<div class="cart-empty"><i data-lucide="shopping-cart" class="empty-icon"></i><p>Your cart is empty</p></div>`; footerEl.style.display = 'none'; refreshIcons(); return; }
+      footerEl.style.display = 'block';
+      document.getElementById('cartSubtotal').textContent = `₱${total.toFixed(2)}`;
+      document.getElementById('cartTotal').textContent    = `₱${total.toFixed(2)}`;
+      itemsEl.innerHTML = cart.map(item => `
+        <div class="cart-item">
+          <img src="${item.image}" alt="${item.name}" class="cart-item-photo" />
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">₱${item.price} each</div>
+            <div class="cart-item-qty">
+              <button class="qty-btn" onclick="updateQty(${item.id}, -1)"><i data-lucide="minus" class="inline-icon" style="margin:0;"></i></button>
+              <span class="qty-val">${item.qty}</span>
+              <button class="qty-btn" onclick="updateQty(${item.id}, 1)"><i data-lucide="plus" class="inline-icon" style="margin:0;"></i></button>
+            </div>
+          </div>
+          <div class="cart-item-total">₱${(item.price * item.qty).toFixed(2)}</div>
+          <button class="btn-remove" onclick="removeFromCart(${item.id})"><i data-lucide="trash-2"></i></button>
+        </div>`).join('');
+      refreshIcons();
+    }
+    function openCart()  { document.getElementById('cartOverlay').classList.add('open'); }
+    function closeCart() { document.getElementById('cartOverlay').classList.remove('open'); }
+    function handleCartOverlayClick(e) { if (e.target === document.getElementById('cartOverlay')) closeCart(); }
+
+    /* ── AUTH ── */
+    function openAuth()  { document.getElementById('authOverlay').classList.add('open'); }
+    function closeAuth() { document.getElementById('authOverlay').classList.remove('open'); }
+    function handleAuthOverlayClick(e) { if (e.target === document.getElementById('authOverlay')) closeAuth(); }
+    function toggleAuth() {
+      isRegister = !isRegister;
+      document.getElementById('authTitle').textContent    = isRegister ? 'Create Account' : 'Welcome Back';
+      document.getElementById('authSub').textContent      = isRegister ? "Join Lola Edna's community" : 'Sign in to track your orders';
+      document.getElementById('authBtnText').textContent  = isRegister ? 'Register' : 'Sign In';
+      document.getElementById('registerName').style.display = isRegister ? 'block' : 'none';
+      document.getElementById('authSwitch').innerHTML = isRegister
+        ? 'Already have an account? <a onclick="toggleAuth()">Sign in</a>'
+        : "Don't have an account? <a onclick=\"toggleAuth()\">Register here</a>";
+    }
+    function handleAuth() {
+      const email = document.getElementById('inputEmail').value.trim();
+      const pass  = document.getElementById('inputPassword').value;
+      const name  = document.getElementById('inputName').value.trim();
+      if (!email || !pass)     { showToast('Please fill in all fields.'); return; }
+      if (isRegister && !name) { showToast('Please enter your name.');    return; }
+      currentUser = { name: isRegister ? name : email.split('@')[0], email };
+      document.querySelector('.btn-nav-login').textContent = `Hi, ${currentUser.name.split(' ')[0]}!`;
+      closeAuth();
+      showToast(`Welcome${isRegister ? '' : ' back'}, ${currentUser.name.split(' ')[0]}!`);
+    }
+
+    /* ── PAYMENT & FULFILLMENT ── */
+    function setPayment(method) {
+      paymentMethod = method;
+      document.getElementById('payBtnCOD').className   = `pay-btn${method === 'cod'   ? ' active'       : ''}`;
+      document.getElementById('payBtnGcash').className = `pay-btn${method === 'gcash' ? ' gcash-active' : ''}`;
+      document.getElementById('codBadgeEl').style.display = method === 'cod' ? 'flex' : 'none';
+      document.getElementById('gcashInfoEl').className = `gcash-info${method === 'gcash' ? ' show' : ''}`;
+    }
+    function setFulfillment(method) {
+      fulfillmentMethod = method;
+      document.getElementById('btnDelivery').classList.toggle('active', method === 'delivery');
+      document.getElementById('btnPickup').classList.toggle('active',   method === 'pickup');
+      document.getElementById('addressGroup').style.display = method === 'delivery' ? 'block' : 'none';
+      document.getElementById('pickupNote').style.display   = method === 'pickup'   ? 'block' : 'none';
+    }
+
+    /* ── CHECKOUT ── */
+    function openCheckout() {
+      if (cart.length === 0)                               { showToast('Your cart is empty!'); return; }
+      if (orderType === 'wholesale' && getCartCount() < 6) { showToast('<i data-lucide="alert-triangle" class="inline-icon"></i> Wholesale orders require at least 6 jars!'); return; }
+      const now = new Date(); now.setHours(now.getHours() + 2);
+      document.getElementById('co-datetime').min = now.toISOString().slice(0, 16);
+      closeCart();
+      document.getElementById('checkoutForm').style.display    = 'block';
+      document.getElementById('checkoutSuccess').style.display = 'none';
+      document.getElementById('wholesaleNoteCheckout').classList.toggle('show', orderType === 'wholesale');
+      setPayment('cod'); setFulfillment('delivery'); renderCheckoutSummary();
+      document.getElementById('checkoutOverlay').classList.add('open');
+    }
+    function closeCheckout() { document.getElementById('checkoutOverlay').classList.remove('open'); }
+    function handleCheckoutOverlayClick(e) { if (e.target === document.getElementById('checkoutOverlay')) closeCheckout(); }
+    function renderCheckoutSummary() {
+      const subtotal     = getCartTotal();
+      const totalQty     = getCartCount();
+      const promoApplied = orderType === 'wholesale' && totalQty >= 6;
+      const discount     = promoApplied ? subtotal * 0.10 : 0;
+      const total        = subtotal - discount;
+      document.getElementById('checkoutOrderSummary').innerHTML = `
+        <div style="background:var(--tan-light);border-radius:12px;padding:1rem;font-size:.85rem;">
+          <div style="font-weight:700;color:var(--brown-dark);margin-bottom:.6rem;">Order Summary ${orderType === 'wholesale' ? '<span class="wholesale-badge"><i data-lucide="package" class="inline-icon" style="margin:0;"></i> WHOLESALE</span>' : ''}</div>
+          ${cart.map(i => `<div style="display:flex;justify-content:space-between;margin-bottom:.3rem;color:var(--text-mid);"><span>${i.emoji} ${i.name} × ${i.qty}</span><span>₱${(i.price * i.qty).toFixed(2)}</span></div>`).join('')}
+          ${promoApplied ? `<div style="display:flex;justify-content:space-between;margin-bottom:.3rem;color:#198754;font-weight:700;"><span><i data-lucide="party-popper" class="inline-icon"></i> Wholesale Promo (-10%)</span><span>-₱${discount.toFixed(2)}</span></div>` : ''}
+          <div style="border-top:1px solid var(--tan);padding-top:.6rem;margin-top:.4rem;font-weight:900;font-family:'Playfair Display',serif;display:flex;justify-content:space-between;color:var(--brown-dark);"><span>Total</span><span>₱${total.toFixed(2)}</span></div>
+        </div>`;
+      refreshIcons();
+    }
+    function placeOrder() {
+      const name          = document.getElementById('co-name').value.trim();
+      const phone         = document.getElementById('co-phone').value.trim();
+      const address       = fulfillmentMethod === 'delivery' ? document.getElementById('co-address').value.trim() : 'PICKUP';
+      const scheduledDate = document.getElementById('co-datetime').value;
+      if (!name || !phone)                              { showToast('Please fill in all required fields.'); return; }
+      if (fulfillmentMethod === 'delivery' && !address) { showToast('Please enter a delivery address.');   return; }
+      const subtotal     = getCartTotal();
+      const totalQty     = getCartCount();
+      const promoApplied = orderType === 'wholesale' && totalQty >= 6;
+      const discount     = promoApplied ? subtotal * 0.10 : 0;
+      const finalTotal   = subtotal - discount;
+      const orderId      = 'LE-' + Date.now().toString().slice(-6);
+      const order = { id: orderId, name, phone, address, items: [...cart], subtotal, discount, total: finalTotal, type: orderType, payment: paymentMethod, fulfillment: fulfillmentMethod, scheduledDate: scheduledDate || null, source: 'online', status: 'approval', placedAt: new Date() };
+      orders.unshift(order);
+      lastPlacedOrder = order;
+      cart.forEach(ci => { const p = PRODUCTS.find(pr => pr.id === ci.id); if (p) p.stock = Math.max(0, p.stock - ci.qty); });
+      cart = []; updateCartUI(); renderOrders(); renderSellerOrders(); renderProducts(activeFilterCat());
+      document.getElementById('successOrderId').textContent    = `Order #${orderId}`;
+      document.getElementById('checkoutForm').style.display    = 'none';
+      document.getElementById('checkoutSuccess').style.display = 'block';
+    }
+
+    /* ── ORDER TRACKER ── */
+    function renderOrders() {
+      const container = document.getElementById('ordersContainer');
+      const online    = orders.filter(o => o.source === 'online');
+      if (online.length === 0) { container.innerHTML = `<div class="no-orders-msg">No orders yet. <a href="#products" style="color:var(--amber);font-weight:700;">Start shopping!</a></div>`; refreshIcons(); return; }
+      const steps = [
+        { key: 'approval',  icon: 'clock',          title: 'Awaiting Approval', desc: 'Waiting for seller to confirm your order.' },
+        { key: 'pending',   icon: 'clipboard-check', title: 'Order Confirmed',   desc: 'Your order has been approved by the seller.' },
+        { key: 'preparing', icon: 'chef-hat',        title: 'Preparing',         desc: 'Lola Edna is preparing your order.' },
+        { key: 'delivery',  icon: 'truck',           title: 'Out for Delivery',  desc: '' },
+        { key: 'delivered', icon: 'check-circle',    title: 'Delivered',         desc: 'Enjoy your order. Thank you!' },
+      ];
+      const statusLabels = { approval: 'Awaiting Approval', pending: 'Confirmed', preparing: 'Preparing', delivery: 'Out for Delivery', delivered: 'Delivered', cancelled: 'Cancelled' };
+      const statusCls    = { approval: 'status-approval', pending: 'status-pending', preparing: 'status-preparing', delivery: 'status-delivery', delivered: 'status-delivered', cancelled: 'status-cancelled' };
+      container.innerHTML = online.map(o => {
+        const isCancellable = o.status === 'approval';
+        const isCancelled   = o.status === 'cancelled';
+        const isDelivered   = o.status === 'delivered';
+        const hasUnreviewed = o.items.some(i => !i.isReviewed);
+        const statusIndex   = steps.findIndex(s => s.key === o.status);
+        const stepsForOrder = steps.map(s => ({ ...s, desc: s.key === 'delivery' ? (o.fulfillment === 'pickup' ? 'Ready for pickup!' : 'Your order is on its way!') : s.desc }));
+        const deliveryStatusLabel = o.status === 'delivery' && o.fulfillment === 'pickup' ? 'Ready for Pickup' : statusLabels[o.status];
+        const typeBadge  = o.type === 'wholesale' ? `<span style="font-size:.68rem;background:var(--gold);color:var(--brown-dark);font-weight:900;padding:.2rem .55rem;border-radius:10px;margin-left:.4rem;"><i data-lucide="package" class="inline-icon" style="margin:0;"></i> WHOLESALE</span>` : `<span style="font-size:.68rem;background:#cfe2ff;color:#084298;font-weight:900;padding:.2rem .55rem;border-radius:10px;margin-left:.4rem;"><i data-lucide="shopping-bag" class="inline-icon" style="margin:0;"></i> RETAIL</span>`;
+        const payBadge   = o.payment === 'gcash' ? `<span style="font-size:.68rem;background:#e8f4ff;color:#0074e0;font-weight:900;padding:.2rem .55rem;border-radius:10px;margin-left:.4rem;"><i data-lucide="smartphone" class="inline-icon" style="margin:0;"></i> GCash</span>` : `<span style="font-size:.68rem;background:#d1e7dd;color:#0a3622;font-weight:900;padding:.2rem .55rem;border-radius:10px;margin-left:.4rem;"><i data-lucide="banknote" class="inline-icon" style="margin:0;"></i> COD</span>`;
+        const discountLine = (o.discount && o.discount > 0) ? `<span style="color:#198754;font-weight:700;"> · <i data-lucide="party-popper" class="inline-icon"></i> -₱${o.discount.toFixed(2)} promo</span>` : '';
+        const schedLine  = o.scheduledDate ? `<div style="font-size:.78rem;color:var(--amber);margin-top:.2rem;"><i data-lucide="calendar" class="inline-icon"></i> Scheduled: ${new Date(o.scheduledDate).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' })}</div>` : '';
+        return `
+          <div class="tracker-card" id="order-card-${o.id}">
+            <div class="tracker-header">
+              <div>
+                <div class="tracker-id">Order #${o.id} ${typeBadge} ${payBadge}</div>
+                <div style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--brown-dark);margin-top:.2rem;">${o.name}</div>
+                <div style="font-size:.8rem;color:var(--text-light);">${o.fulfillment === 'pickup' ? '<i data-lucide="store" class="inline-icon"></i> Pickup' : `<i data-lucide="map-pin" class="inline-icon"></i> ${o.address}`}</div>
+                ${schedLine}
+              </div>
+              <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;">
+                <span class="status-pill ${statusCls[o.status]}">${deliveryStatusLabel}</span>
+                ${isCancellable ? `<button class="btn-cancel-order" onclick="openCancelConfirm('${o.id}')"><i data-lucide="x"></i> Cancel Order</button>` : ''}
+                ${isDelivered && hasUnreviewed ? `<button class="btn-rate" onclick="openRatingForOrder('${o.id}')" style="margin-left:0;"><i data-lucide="star" class="inline-icon" style="margin:0;"></i> Rate Products</button>` : ''}
+              </div>
+            </div>
+            ${isCancelled ? `<div style="background:#f8d7da;border-radius:12px;padding:.9rem 1rem;font-size:.85rem;color:#842029;text-align:center;margin-bottom:.8rem;"><i data-lucide="x-circle" class="inline-icon"></i> This order was cancelled.</div>` : `
+              <div class="timeline">
+                ${stepsForOrder.map((step, i) => {
+                  const isDone   = statusIndex > i && !isCancelled;
+                  const isActive = i === statusIndex && !isCancelled;
+                  return `<div class="timeline-step ${isDone ? 'done' : ''} ${isActive ? 'active' : ''}">
+                    <div class="t-dot">${isDone ? '<i data-lucide="check"></i>' : `<i data-lucide="${step.icon}"></i>`}</div>
+                    <div class="t-info"><div class="t-title">${step.title}</div><div class="t-desc">${step.desc}</div></div>
+                  </div>`;
+                }).join('')}
+              </div>`}
+            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--tan-light);display:flex;justify-content:space-between;font-size:.85rem;color:var(--text-mid);flex-wrap:wrap;gap:.3rem;">
+              <span>${o.items.length} item(s) · ₱${o.total.toFixed(2)} ${payBadge}${discountLine}</span>
+              <button onclick="showReceiptForOrder('${o.id}')" style="background:none;border:none;color:var(--amber);font-size:.82rem;font-weight:700;cursor:pointer;"><i data-lucide="receipt" class="inline-icon"></i> Receipt</button>
+            </div>
+          </div>`;
+      }).join('');
+      refreshIcons();
+    }
+
+    /* ── CANCEL ── */
+    function openCancelConfirm(orderId) { cancelTargetId = orderId; document.getElementById('cancelOrderIdDisplay').textContent = `#${orderId}`; document.getElementById('cancelConfirmOverlay').classList.add('open'); }
+    function closeCancelConfirm() { cancelTargetId = null; document.getElementById('cancelConfirmOverlay').classList.remove('open'); }
+    function confirmCancelOrder() {
+      if (!cancelTargetId) return;
+      const order = orders.find(o => o.id === cancelTargetId);
+      if (order && order.status === 'approval') {
+        order.status = 'cancelled';
+        order.items.forEach(ci => { const p = PRODUCTS.find(pr => pr.id === ci.id); if (p) p.stock += ci.qty; });
+        renderOrders(); renderSellerOrders(); renderProducts(activeFilterCat());
+        showToast(`Order #${cancelTargetId} has been cancelled.`);
+      }
+      closeCancelConfirm();
+    }
+
+    /* ── SELLER LOGIN ── */
+    function openSellerPanel() {
+      if (sellerAuthenticated) { _launchSellerDashboard(); }
+      else {
+        document.getElementById('sellerLoginUser').value = '';
+        document.getElementById('sellerLoginPass').value = '';
+        document.getElementById('sellerLoginError').classList.remove('show');
+        document.getElementById('sellerLoginOverlay').classList.add('open');
+        setTimeout(() => document.getElementById('sellerLoginUser').focus(), 100);
+      }
+    }
+    function closeSellerLogin() { document.getElementById('sellerLoginOverlay').classList.remove('open'); }
+    function doSellerLogin() {
+      const u = document.getElementById('sellerLoginUser').value.trim();
+      const p = document.getElementById('sellerLoginPass').value;
+      if (u === SELLER_CREDENTIALS.username && p === SELLER_CREDENTIALS.password) {
+        sellerAuthenticated = true; closeSellerLogin(); showToast('Welcome, Lola Edna!'); _launchSellerDashboard();
+      } else {
+        document.getElementById('sellerLoginError').classList.add('show');
+        document.getElementById('sellerLoginPass').value = ''; document.getElementById('sellerLoginPass').focus();
+      }
+    }
+    function _launchSellerDashboard() { renderSellerOrders(); renderAllOrdersTable(); renderCustomers(); renderReports(); renderStockManager(); populateManualOrderProducts(); document.getElementById('sellerPanelOverlay').classList.add('open'); }
+    function closeSellerPanel() { document.getElementById('sellerPanelOverlay').classList.remove('open'); }
+    function handleSellerOverlayClick(e) { if (e.target === document.getElementById('sellerPanelOverlay')) closeSellerPanel(); }
+
+    function switchSpTab(tabId, btn) {
+      document.querySelectorAll('.sp-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.sp-tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('sp-' + tabId).classList.add('active');
+      if (tabId === 'allorders') renderAllOrdersTable();
+      if (tabId === 'customers') renderCustomers();
+      if (tabId === 'reports')   renderReports();
+      if (tabId === 'stock')     renderStockManager();
+    }
+
+    function renderSellerOrders() {
+      const pending = orders.filter(o => o.status === 'approval');
+      const list    = document.getElementById('sellerOrdersList');
+      if (!list) return;
+      if (pending.length === 0) { list.innerHTML = `<div class="no-pending"><i data-lucide="check-circle" class="inline-icon"></i> No pending orders. All caught up!</div>`; refreshIcons(); return; }
+      list.innerHTML = pending.map(o => {
+        const typeClass = o.type === 'wholesale' ? 'approval-type-wholesale' : 'approval-type-retail';
+        const typeLabel = o.type === 'wholesale' ? '<i data-lucide="package" class="inline-icon" style="margin:0;"></i> Wholesale' : '<i data-lucide="shopping-bag" class="inline-icon" style="margin:0;"></i> Retail';
+        const srcBadge  = `<span class="source-badge source-${o.source || 'online'}">${o.source === 'fb' ? '<i data-lucide="facebook" class="inline-icon" style="margin:0;"></i> FB' : o.source === 'direct' ? '<i data-lucide="store" class="inline-icon" style="margin:0;"></i> Direct' : '<i data-lucide="globe" class="inline-icon" style="margin:0;"></i> Online'}</span>`;
+        return `
+          <div class="approval-card" id="approval-${o.id}">
+            <div class="approval-card-header"><div class="approval-card-id">Order #${o.id} ${srcBadge}</div><span class="approval-card-type ${typeClass}">${typeLabel}</span></div>
+            <div style="font-size:.82rem;color:var(--text-mid);margin-bottom:.4rem;"><i data-lucide="user" class="inline-icon"></i> ${o.name} · <i data-lucide="phone" class="inline-icon"></i> ${o.phone}</div>
+            <div style="font-size:.78rem;color:var(--text-light);margin-bottom:.3rem;">${o.fulfillment === 'pickup' ? '<i data-lucide="store" class="inline-icon"></i> Pickup' : `<i data-lucide="map-pin" class="inline-icon"></i> ${o.address}`}</div>
+            ${o.scheduledDate ? `<div style="font-size:.76rem;color:var(--amber);margin-bottom:.4rem;"><i data-lucide="calendar" class="inline-icon"></i> Requested: ${new Date(o.scheduledDate).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' })}</div>` : ''}
+            <div class="approval-card-items">${o.items.map(i => `${i.emoji} ${i.name} × ${i.qty}`).join(' · ')}</div>
+            <div class="approval-card-total">Total: ₱${o.total.toFixed(2)} · ${o.payment === 'gcash' ? '<i data-lucide="smartphone" class="inline-icon"></i> GCash' : '<i data-lucide="banknote" class="inline-icon"></i> COD'} ${o.discount > 0 ? `<span style="font-size:.78rem;color:#198754;font-weight:600;margin-left:.4rem;">(incl. ₱${o.discount.toFixed(2)} promo)</span>` : ''}</div>
+            <div class="approval-actions">
+              <button class="btn-approve" onclick="approveOrder('${o.id}')"><i data-lucide="check" class="inline-icon" style="margin:0;"></i> Approve</button>
+              <button class="btn-reject"  onclick="rejectOrder('${o.id}')"><i data-lucide="x" class="inline-icon" style="margin:0;"></i> Reject</button>
+            </div>
+          </div>`;
+      }).join('');
+      refreshIcons();
+    }
+
+    function renderAllOrdersTable() {
+      const tbody = document.getElementById('allOrdersBody');
+      if (!tbody) return;
+      if (orders.length === 0) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--text-light);">No orders yet.</td></tr>`; refreshIcons(); return; }
+      const statusLabels = { approval: 'Awaiting', pending: 'Confirmed', preparing: 'Preparing', delivery: 'Delivering', delivered: 'Delivered', cancelled: 'Cancelled' };
+      const statusColors = { approval: '#7a4900', pending: '#856404', preparing: '#084298', delivery: '#0a3622', delivered: '#198754', cancelled: '#842029' };
+      const nextStatuses = { approval: 'pending', pending: 'preparing', preparing: 'delivery', delivery: 'delivered' };
+      tbody.innerHTML = orders.map(o => {
+        const next = nextStatuses[o.status];
+        return `<tr>
+          <td><strong>${o.id}</strong><br><span class="source-badge source-${o.source || 'online'}" style="font-size:.6rem;margin-top:.2rem;">${o.source || 'online'}</span></td>
+          <td>${o.name}<br><span style="font-size:.75rem;color:var(--text-light);">${o.phone}</span></td>
+          <td style="font-size:.78rem;">${o.items.map(i => `${i.emoji}×${i.qty}`).join(' ')}</td>
+          <td><strong>₱${o.total.toFixed(2)}</strong><br><span style="font-size:.72rem;color:${o.payment === 'gcash' ? '#0074e0' : '#198754'};"><i data-lucide="${o.payment === 'gcash' ? 'smartphone' : 'banknote'}" style="width:10px;height:10px;vertical-align:middle;"></i> ${o.payment === 'gcash' ? 'GCash' : 'COD'}</span></td>
+          <td style="font-size:.75rem;">${o.fulfillment === 'pickup' ? '<i data-lucide="store" style="width:12px;height:12px;vertical-align:middle;"></i> Pickup' : '<i data-lucide="truck" style="width:12px;height:12px;vertical-align:middle;"></i> Delivery'}</td>
+          <td><span style="color:${statusColors[o.status]||'#333'};font-weight:700;font-size:.8rem;">${statusLabels[o.status]||o.status}</span></td>
+          <td>${next ? `<button class="btn-advance" onclick="advanceOrder('${o.id}')" style="font-size:.72rem;padding:.35rem .8rem;">→ ${statusLabels[next]}</button>` : '—'}</td>
+        </tr>`;
+      }).join('');
+      refreshIcons();
+    }
+
+    function advanceOrder(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+      const next = { approval: 'pending', pending: 'preparing', preparing: 'delivery', delivery: 'delivered' }[order.status];
+      if (next) { order.status = next; renderOrders(); renderAllOrdersTable(); renderSellerOrders(); showToast(`Order #${orderId} updated to "${next}"`); }
+    }
+    function approveOrder(orderId) { advanceOrder(orderId); renderSellerOrders(); }
+    function rejectOrder(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+      order.status = 'cancelled';
+      order.items.forEach(ci => { const p = PRODUCTS.find(pr => pr.id === ci.id); if (p) p.stock += ci.qty; });
+      renderOrders(); renderSellerOrders(); renderAllOrdersTable(); renderProducts(activeFilterCat());
+      showToast(`<i data-lucide="x-circle" class="inline-icon"></i> Order #${orderId} rejected.`);
+    }
+
+    function renderCustomers() {
+      const el = document.getElementById('customersList');
+      if (!el) return;
+      const uniqueMap = {};
+      orders.forEach(o => { if (!uniqueMap[o.phone]) { uniqueMap[o.phone] = { name: o.name, phone: o.phone, address: o.address || '', count: 0, total: 0 }; } uniqueMap[o.phone].count++; uniqueMap[o.phone].total += o.total; });
+      const customers = Object.values(uniqueMap);
+      if (customers.length === 0) { el.innerHTML = '<div class="no-pending">No customers yet.</div>'; return; }
+      el.innerHTML = customers.map(c => `
+        <div class="customer-card">
+          <div class="cust-avatar">${c.name[0].toUpperCase()}</div>
+          <div class="cust-info">
+            <div class="cust-name">${c.name}</div>
+            <div class="cust-details"><i data-lucide="phone" class="inline-icon" style="margin:0;"></i> ${c.phone} ${c.address && c.address !== 'PICKUP' ? `· <i data-lucide="map-pin" class="inline-icon" style="margin:0;"></i> ${c.address}` : '🏪 Pickup'}</div>
+            <div style="font-size:.75rem;color:#198754;font-weight:700;margin-top:.2rem;">Total spent: ₱${c.total.toFixed(2)}</div>
+          </div>
+          <span class="cust-orders-count">${c.count} order${c.count !== 1 ? 's' : ''}</span>
+        </div>`).join('');
+      refreshIcons();
+    }
+
+    function renderReports() {
+      const el = document.getElementById('reportSummary');
+      if (!el) return;
+      const delivered     = orders.filter(o => o.status === 'delivered');
+      const totalRevenue  = delivered.reduce((s, o) => s + o.total, 0);
+      const pendingCount  = orders.filter(o => o.status === 'approval').length;
+      const cancelledCount = orders.filter(o => o.status === 'cancelled').length;
+      el.innerHTML = `
+        <div class="report-card"><div class="r-val">₱${totalRevenue.toFixed(0)}</div><div class="r-lbl">Total Revenue</div></div>
+        <div class="report-card"><div class="r-val">${orders.length}</div><div class="r-lbl">Total Orders</div></div>
+        <div class="report-card"><div class="r-val">${delivered.length}</div><div class="r-lbl">Completed</div></div>
+        <div class="report-card"><div class="r-val">${pendingCount}</div><div class="r-lbl">Pending</div></div>
+        <div class="report-card"><div class="r-val">${cancelledCount}</div><div class="r-lbl">Cancelled</div></div>`;
+      const productCount = {};
+      orders.forEach(o => o.items.forEach(i => { productCount[i.name] = (productCount[i.name] || 0) + i.qty; }));
+      const sorted = Object.entries(productCount).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      document.getElementById('topProductsList').innerHTML = sorted.length === 0 ? '<li style="color:var(--text-light);font-size:.85rem;">No data yet.</li>' : sorted.map(([name, qty]) => `<li><span>${name}</span><strong>${qty} units</strong></li>`).join('');
+      const srcCount = {};
+      orders.forEach(o => { const s = o.source || 'online'; srcCount[s] = (srcCount[s] || 0) + 1; });
+      document.getElementById('sourcesList').innerHTML = Object.keys(srcCount).length === 0 ? '<li style="color:var(--text-light);font-size:.85rem;">No data yet.</li>' : Object.entries(srcCount).map(([s, c]) => `<li><span>${s === 'fb' ? '📘 Facebook' : s === 'direct' ? '🏪 Direct' : '🌐 Online'}</span><strong>${c} orders</strong></li>`).join('');
+      const payCount = {};
+      orders.forEach(o => { const p = o.payment || 'cod'; payCount[p] = (payCount[p] || 0) + 1; });
+      document.getElementById('paymentsList').innerHTML = Object.keys(payCount).length === 0 ? '<li style="color:var(--text-light);font-size:.85rem;">No data yet.</li>' : Object.entries(payCount).map(([p, c]) => `<li><span>${p === 'gcash' ? '📱 GCash' : p === 'cash' ? '💰 Cash' : '💵 COD'}</span><strong>${c} orders</strong></li>`).join('');
+      refreshIcons();
+    }
+
+    function renderStockManager() {
+      const el = document.getElementById('stockList');
+      if (!el) return;
+      el.innerHTML = PRODUCTS.map(p => {
+        const cls = p.stock === 0 ? 'stock-out' : p.stock <= 4 ? 'stock-low' : 'stock-ok';
+        let stockLabel = p.stock === 0 ? `<i data-lucide="x-circle" class="inline-icon" style="margin:0;width:12px;height:12px;"></i> Out of Stock` : p.stock <= 4 ? `<i data-lucide="alert-triangle" class="inline-icon" style="margin:0;width:12px;height:12px;"></i> Low (${p.stock})` : `<i data-lucide="check-circle" class="inline-icon" style="margin:0;width:12px;height:12px;"></i> ${p.stock} in stock`;
+        return `
+          <div style="display:flex;align-items:center;gap:.8rem;padding:.8rem;background:#fff;border-radius:14px;border:1.5px solid var(--tan-light);margin-bottom:.6rem;flex-wrap:wrap;">
+            <span style="font-size:1.6rem;">${p.emoji}</span>
+            <div style="flex:1;"><div style="font-family:'Playfair Display',serif;font-weight:700;color:var(--brown-dark);font-size:.9rem;">${p.name}</div><span class="stock-badge ${cls}" style="position:static;display:inline-flex;align-items:center;gap:.2rem;margin-top:.2rem;">${stockLabel}</span></div>
+            <div style="display:flex;align-items:center;gap:.4rem;">
+              <button class="qty-btn" onclick="adjustStock(${p.id}, -1)"><i data-lucide="minus" class="inline-icon" style="margin:0;"></i></button>
+              <input type="number" min="0" value="${p.stock}" id="stock-input-${p.id}" style="width:55px;text-align:center;border:1.5px solid var(--tan-light);border-radius:8px;padding:.3rem;font-size:.9rem;" onchange="setStock(${p.id}, this.value)" />
+              <button class="qty-btn" onclick="adjustStock(${p.id}, 1)"><i data-lucide="plus" class="inline-icon" style="margin:0;"></i></button>
+            </div>
+          </div>`;
+      }).join('');
+      refreshIcons();
+    }
+    function adjustStock(id, delta) { const p = PRODUCTS.find(pr => pr.id === id); if (p) { p.stock = Math.max(0, p.stock + delta); renderStockManager(); renderProducts(activeFilterCat()); } }
+    function setStock(id, val) { const p = PRODUCTS.find(pr => pr.id === id); if (p) { p.stock = Math.max(0, parseInt(val) || 0); renderProducts(activeFilterCat()); } }
+
+    function populateManualOrderProducts() {
+      document.querySelectorAll('.mo-product-sel').forEach(sel => {
+        if (sel.options.length <= 1) {
+          PRODUCTS.forEach(p => { const opt = document.createElement('option'); opt.value = p.id; opt.textContent = `${p.emoji} ${p.name} — ₱${p.price}`; sel.appendChild(opt); });
+        }
+      });
+    }
+    function addMoItem() {
+      const container = document.getElementById('moItemsContainer');
+      const row = document.createElement('div'); row.className = 'manual-item-row';
+      row.innerHTML = `<select class="mo-product-sel"><option value="">— Select Product —</option>${PRODUCTS.map(p => `<option value="${p.id}">${p.emoji} ${p.name} — ₱${p.price}</option>`).join('')}</select><input type="number" min="1" value="1" class="mo-qty-inp" /><button class="btn-rm-item" onclick="removeMoItem(this)"><i data-lucide="trash-2" class="inline-icon" style="margin:0;"></i></button>`;
+      container.appendChild(row); refreshIcons();
+    }
+    function removeMoItem(btn) { const rows = document.querySelectorAll('.manual-item-row'); if (rows.length <= 1) { showToast('At least one item is required.'); return; } btn.closest('.manual-item-row').remove(); }
+    function submitManualOrder() {
+      const name = document.getElementById('mo-name').value.trim(), phone = document.getElementById('mo-phone').value.trim(), address = document.getElementById('mo-address').value.trim(), source = document.getElementById('mo-source').value, payment = document.getElementById('mo-payment').value, type = document.getElementById('mo-type').value, scheduledDate = document.getElementById('mo-datetime').value;
+      if (!name || !phone) { showToast('Please fill in customer name and phone.'); return; }
+      const items = [];
+      document.querySelectorAll('.manual-item-row').forEach(row => { const sel = row.querySelector('.mo-product-sel'), qty = parseInt(row.querySelector('.mo-qty-inp').value) || 1; if (sel.value) { const p = PRODUCTS.find(pr => pr.id === parseInt(sel.value)); if (p) { const price = type === 'wholesale' ? Math.round(p.price * 0.9) : p.price; items.push({ ...p, price, qty }); } } });
+      if (items.length === 0) { showToast('Please select at least one product.'); return; }
+      const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0), totalQty = items.reduce((s, i) => s + i.qty, 0), promoApplied = type === 'wholesale' && totalQty >= 6, discount = promoApplied ? subtotal * 0.10 : 0, finalTotal = subtotal - discount, orderId = 'LE-' + Date.now().toString().slice(-6);
+      const order = { id: orderId, name, phone, address: address || 'PICKUP', items, subtotal, discount, total: finalTotal, type, payment, fulfillment: address ? 'delivery' : 'pickup', scheduledDate: scheduledDate || null, source, status: 'pending', placedAt: new Date() };
+      orders.unshift(order);
+      items.forEach(ci => { const p = PRODUCTS.find(pr => pr.id === ci.id); if (p) p.stock = Math.max(0, p.stock - ci.qty); });
+      renderAllOrdersTable(); renderCustomers(); renderReports(); renderStockManager(); renderProducts(activeFilterCat());
+      document.getElementById('mo-name').value = ''; document.getElementById('mo-phone').value = ''; document.getElementById('mo-address').value = ''; document.getElementById('mo-datetime').value = '';
+      document.getElementById('moItemsContainer').innerHTML = `<div class="manual-item-row"><select class="mo-product-sel"><option value="">— Select Product —</option>${PRODUCTS.map(p => `<option value="${p.id}">${p.emoji} ${p.name} — ₱${p.price}</option>`).join('')}</select><input type="number" min="1" value="1" class="mo-qty-inp" /><button class="btn-rm-item" onclick="removeMoItem(this)"><i data-lucide="trash-2" class="inline-icon" style="margin:0;"></i></button></div>`;
+      refreshIcons();
+      showToast(`<i data-lucide="check-circle" class="inline-icon"></i> Manual order #${orderId} created for ${name}!`);
+    }
+
+    /* ── REVIEWS PAGE LOGIC ── */
+    function getAllReviews() {
+      const all = [];
+      PRODUCTS.forEach(p => {
+        const r = ratings[p.id];
+        if (r && r.reviews) {
+          r.reviews.forEach(rv => {
+            all.push({ ...rv, productId: p.id, productName: p.name, productEmoji: p.emoji });
+          });
+        }
+      });
+      return all.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    }
+
+    function populateProductFilter() {
+      const sel = document.getElementById('productFilterSelect');
+      if (!sel) return;
+      while (sel.options.length > 1) sel.remove(1);
+      PRODUCTS.forEach(p => {
+        const r = ratings[p.id];
+        if (r && r.reviews && r.reviews.length > 0) {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = `${p.emoji} ${p.name}`;
+          sel.appendChild(opt);
+        }
+      });
+      sel.value = reviewsProductFilter;
+    }
+
+    function renderReviewsSummary() {
+      const all = getAllReviews();
+      const totalCount = all.length;
+      const totalStars = all.reduce((s, r) => s + r.stars, 0);
+      const avg        = totalCount > 0 ? totalStars / totalCount : 0;
+
+      document.getElementById('totalReviewsBadge').textContent = totalCount;
+      document.getElementById('overallAvgNum').textContent     = totalCount > 0 ? avg.toFixed(1) : '—';
+      document.getElementById('overallCount').textContent      = `${totalCount} review${totalCount !== 1 ? 's' : ''}`;
+
+      const bigStars = [1,2,3,4,5].map(s => `<span style="color:${s <= Math.round(avg) ? 'var(--gold)' : 'rgba(255,255,255,0.2)'}">★</span>`).join('');
+      document.getElementById('overallStars').innerHTML = bigStars;
+
+      const breakdown = [5,4,3,2,1].map(s => ({ stars: s, count: all.filter(r => r.stars === s).length }));
+      document.getElementById('starBreakdownBars').innerHTML = breakdown.map(b => `
+        <div class="star-bar-row">
+          <div class="star-bar-label">${b.stars} ★</div>
+          <div class="star-bar-track">
+            <div class="star-bar-fill" style="width:${totalCount > 0 ? Math.round(b.count / totalCount * 100) : 0}%"></div>
+          </div>
+          <div class="star-bar-count">${b.count}</div>
+        </div>`).join('');
+    }
+
+    function renderReviewsPage() {
+      renderReviewsSummary();
+      populateProductFilter();
+
+      let reviews = getAllReviews();
+
+      if (reviewsStarFilter !== 'all') {
+        const starNum = parseInt(reviewsStarFilter);
+        reviews = reviews.filter(r => r.stars === starNum);
+      }
+
+      if (reviewsProductFilter !== 'all') {
+        const productId = parseInt(reviewsProductFilter);
+        reviews = reviews.filter(r => r.productId === productId);
+      }
+
+      const grid = document.getElementById('reviewsPageGrid');
+      const countEl = document.getElementById('reviewsResultCount');
+      if (!grid) return;
+
+      countEl.textContent = `Showing ${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+
+      if (reviews.length === 0) {
+        grid.innerHTML = `
+          <div class="rp-no-reviews">
+            <i data-lucide="message-square" class="rp-no-reviews-icon"></i>
+            <p>No reviews match your filters</p>
+            <span>Try adjusting the star or product filter above.</span>
+          </div>`;
+        grid.classList.remove('scrollable-grid');
+        const oldContainer = document.getElementById('seeMoreContainer');
+        if (oldContainer) oldContainer.style.display = 'none';
+        refreshIcons();
+        return;
+      }
+
+      let visibleReviews = reviews;
+      if (!reviewsExpanded && reviews.length > 6) {
+        visibleReviews = reviews.slice(0, 6);
+      }
+
+      grid.innerHTML = visibleReviews.map((rv, idx) => {
+        const starRow = [1,2,3,4,5].map(s => `<span style="color:${s <= rv.stars ? 'var(--gold)' : '#e0d5c8'}">★</span>`).join('');
+        const dateStr = rv.date ? new Date(rv.date).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' }) : '';
+        return `
+          <div class="rp-review-card" style="animation-delay:${idx * 0.05}s;">
+            <div class="rp-card-top">
+              <div class="rp-reviewer-info">
+                <div class="rp-avatar">${rv.name ? rv.name[0].toUpperCase() : 'A'}</div>
+                <div>
+                  <div class="rp-reviewer-name">${rv.name || 'Anonymous'}</div>
+                  <div class="rp-reviewer-date">${dateStr}</div>
+                </div>
+              </div>
+              <div class="rp-stars-badge">
+                <span class="rp-stars-text">${starRow}</span>
+                <span class="rp-stars-num">${rv.stars}.0</span>
+              </div>
+            </div>
+            <div class="rp-product-tag">
+              <span class="rp-product-emoji">${rv.productEmoji}</span>
+              ${rv.productName}
+            </div>
+            ${rv.message ? `<div class="rp-message">${rv.message}</div>` : ''}
+          </div>`;
+      }).join('');
+
+      let seeMoreContainer = document.getElementById('seeMoreContainer');
+      if (!seeMoreContainer) {
+          seeMoreContainer = document.createElement('div');
+          seeMoreContainer.id = 'seeMoreContainer';
+          seeMoreContainer.style.textAlign = 'center';
+          seeMoreContainer.style.marginTop = '2rem';
+          seeMoreContainer.style.gridColumn = '1 / -1';
+          grid.parentNode.insertBefore(seeMoreContainer, grid.nextSibling);
+      }
+      
+      seeMoreContainer.style.display = 'block';
+
+      if (reviews.length > 6) {
+          if (!reviewsExpanded) {
+              grid.classList.remove('scrollable-grid');
+              seeMoreContainer.innerHTML = `<button class="btn-outline" style="color:var(--brown-dark); border-color:var(--brown-dark);" onclick="toggleReviewsExpanded()"><i data-lucide="chevron-down" class="inline-icon"></i> See More Reviews</button>`;
+          } else {
+              grid.classList.add('scrollable-grid');
+              seeMoreContainer.innerHTML = `<button class="btn-outline" style="color:var(--brown-dark); border-color:var(--brown-dark);" onclick="toggleReviewsExpanded()"><i data-lucide="chevron-up" class="inline-icon"></i> Show Less</button>`;
+          }
+      } else {
+          grid.classList.remove('scrollable-grid');
+          seeMoreContainer.innerHTML = '';
+      }
+
+      refreshIcons();
+    }
+
+    function toggleReviewsExpanded() {
+        reviewsExpanded = !reviewsExpanded;
+        renderReviewsPage();
+    }
+
+    function setStarFilter(val, btn) {
+      reviewsStarFilter = val;
+      reviewsExpanded = false;
+      document.querySelectorAll('.star-chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderReviewsPage();
+    }
+
+    function setProductFilter(val) {
+      reviewsProductFilter = val;
+      reviewsExpanded = false;
+      renderReviewsPage();
+    }
+
+    /* ── RATINGS MODAL ── */
+
+    // Called from the "Rate Products" button — passes the ORDER ID so we know
+    // exactly which products the customer purchased.
+    function openRatingForOrder(orderId) {
+      const order = orders.find(o => o.id === orderId);
+      if (!order) return;
+      // Deduplicate items by product id (in case the same product appears twice)
+      const seen = {};
+      const purchasedItems = order.items.filter(i => {
+        if (i.isReviewed) return false;
+        if (seen[i.id]) return false;
+        seen[i.id] = true;
+        return true;
+      });
+      if (purchasedItems.length === 0) return;
+      openRating(purchasedItems[0].id, purchasedItems, orderId);
+    }
+
+    // purchasedItems: array of product objects from the order (only those products
+    // will appear in the dropdown). Falls back to all PRODUCTS if not provided.
+    function openRating(productId, purchasedItems, orderId = null) {
+      ratingTargetId = productId;
+      ratingTargetOrderId = orderId;
+      selectedStar   = 0;
+      const itemsToShow = purchasedItems || PRODUCTS;
+      populateRatingProductSelect(itemsToShow);
+      const sel = document.getElementById('ratingProductSelect');
+      if (sel) sel.value = productId;
+      const p = PRODUCTS.find(pr => pr.id === productId);
+      document.getElementById('ratingProductName').textContent = p ? `${p.emoji} ${p.name}` : '';
+      document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('lit'));
+      document.getElementById('ratingOverlay').classList.add('open');
+    }
+
+    // Only populate the dropdown with the products the customer actually bought.
+    function populateRatingProductSelect(purchasedItems) {
+      const sel = document.getElementById('ratingProductSelect');
+      if (!sel) return;
+      sel.innerHTML = purchasedItems.map(p =>
+        `<option value="${p.id}">${p.emoji} ${p.name}</option>`
+      ).join('');
+    }
+
+    function switchRatingProduct(productId) {
+      ratingTargetId = parseInt(productId);
+      selectedStar   = 0;
+      const p = PRODUCTS.find(pr => pr.id === ratingTargetId);
+      document.getElementById('ratingProductName').textContent = p ? `${p.emoji} ${p.name}` : '';
+      document.querySelectorAll('.star-btn').forEach(b => b.classList.remove('lit'));
+    }
+
+    function closeRating() {
+      document.getElementById('ratingOverlay').classList.remove('open');
+      ratingTargetId = null; selectedStar = 0; ratingTargetOrderId = null;
+    }
+    function selectStar(val) {
+      selectedStar = val;
+      document.querySelectorAll('.star-btn').forEach(b => { b.classList.toggle('lit', parseInt(b.dataset.val) <= val); });
+    }
+    function submitRating() {
+      if (!ratingTargetId || selectedStar === 0) { showToast('Please select a star rating.'); return; }
+      const message = document.getElementById('ratingMessage').value.trim();
+      const p       = PRODUCTS.find(pr => pr.id === ratingTargetId);
+      ratings[ratingTargetId].total += selectedStar;
+      ratings[ratingTargetId].count++;
+      if (message) {
+        const userName = currentUser ? currentUser.name : 'Anonymous Customer';
+        ratings[ratingTargetId].reviews.unshift({ name: userName, stars: selectedStar, message, date: new Date().toISOString().slice(0, 10), emoji: p ? p.emoji : '⭐' });
+      }
+
+      if (ratingTargetOrderId) {
+        const order = orders.find(o => o.id === ratingTargetOrderId);
+        if (order) {
+          order.items.forEach(i => {
+            if (i.id === ratingTargetId) i.isReviewed = true;
+          });
+        }
+      }
+
+      document.getElementById('ratingMessage').value = '';
+      closeRating();
+      renderProducts(activeFilterCat());
+      renderReviewsPage();
+      renderOrders();
+      showToast('<i data-lucide="star" class="inline-icon"></i> Thank you for your review!');
+    }
+
+    /* ── RECEIPT ── */
+    function buildReceipt(order) {
+      document.getElementById('rcptOrderId').textContent = `Order #${order.id}`;
+      document.getElementById('rcptDate').textContent    = order.placedAt.toLocaleString('en-PH', { dateStyle: 'long', timeStyle: 'short' });
+      document.getElementById('rcptCustomer').innerHTML = `
+        <div class="receipt-row bold"><span>Customer</span><span>${order.name}</span></div>
+        <div class="receipt-row"><span>Phone</span><span>${order.phone}</span></div>
+        <div class="receipt-row"><span>${order.fulfillment === 'pickup' ? 'Pickup' : 'Delivery'}</span><span>${order.fulfillment === 'pickup' ? '🏪 Self-Pickup' : order.address}</span></div>
+        ${order.scheduledDate ? `<div class="receipt-row"><span>Scheduled</span><span>${new Date(order.scheduledDate).toLocaleString('en-PH', { dateStyle: 'medium', timeStyle: 'short' })}</span></div>` : ''}
+        <div class="receipt-row"><span>Payment</span><span>${order.payment === 'gcash' ? '📱 GCash' : '💵 Cash on Delivery'}</span></div>
+        <div class="receipt-row"><span>Type</span><span>${order.type === 'wholesale' ? '📦 Wholesale' : '🛍️ Retail'}</span></div>`;
+      document.getElementById('rcptItems').innerHTML = order.items.map(i => `<div class="receipt-row"><span>${i.emoji} ${i.name} × ${i.qty}</span><span>₱${(i.price * i.qty).toFixed(2)}</span></div>`).join('');
+      document.getElementById('rcptTotals').innerHTML = `
+        <div class="receipt-row"><span>Subtotal</span><span>₱${order.subtotal.toFixed(2)}</span></div>
+        ${order.discount > 0 ? `<div class="receipt-row" style="color:#198754;"><span>🎉 Wholesale Promo</span><span>-₱${order.discount.toFixed(2)}</span></div>` : ''}
+        <div class="receipt-row total-row"><span>TOTAL</span><span>₱${order.total.toFixed(2)}</span></div>`;
+    }
+    function viewReceipt() { if (!lastPlacedOrder) return; buildReceipt(lastPlacedOrder); document.getElementById('receiptOverlay').classList.add('open'); }
+    function showReceiptForOrder(orderId) { const o = orders.find(ord => ord.id === orderId); if (!o) return; buildReceipt(o); document.getElementById('receiptOverlay').classList.add('open'); }
+    function closeReceipt() { document.getElementById('receiptOverlay').classList.remove('open'); }
+
+    /* ── INIT ── */
+    renderProducts();
+    renderOrders();
+    renderReviewsPage();
+
+    document.addEventListener('DOMContentLoaded', () => { refreshIcons(); });
+  </script>
+</body>
+</html>
